@@ -4,6 +4,7 @@
 
 package com.pawelszumanski.controllers;
 
+import com.pawelszumanski.utils.DialogsUtils;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -27,9 +28,11 @@ public class MainController {
     }
 
     @FXML
-    private void closeAppOnAction() {
-        Platform.exit();
-        System.exit(0);
+    public void closeAppOnAction() {
+        if(DialogsUtils.closeAppConfirmationDialog()){
+            Platform.exit();
+            System.exit(0);
+        }
     }
     @FXML
     private void setCaspianStyleOnAction() {
@@ -49,6 +52,7 @@ public class MainController {
         }
     }
     @FXML
-    private void aboutAppOnAction(ActionEvent actionEvent) {
+    private void aboutAppOnAction() {
+        DialogsUtils.dialogAboutApp();
     }
 }
