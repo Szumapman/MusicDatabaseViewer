@@ -5,6 +5,7 @@
 package com.pawelszumanski.controllers;
 
 import com.pawelszumanski.utils.DialogsUtils;
+import com.pawelszumanski.utils.FxmlUtils;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -25,6 +26,10 @@ public class MainController {
     @FXML
     private void initialize(){
         topMenuButtonsController.setMainController(this);
+    }
+
+    public void setCenter(String fxmlPath){
+        mainWindow.setCenter(FxmlUtils.fxmlLoader(fxmlPath));
     }
 
     @FXML

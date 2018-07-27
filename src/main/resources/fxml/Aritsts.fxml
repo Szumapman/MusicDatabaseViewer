@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!--
+  ~ Created by Paweł Szumański
+  -->
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pawelszumanski.controllers.ArtistsController">
+   <children>
+      <TreeView prefHeight="386.0" prefWidth="600.0" />
+      <HBox prefHeight="91.0" prefWidth="600.0">
+         <children>
+            <Label text="Artists" />
+         </children>
+      </HBox>
+   </children>
+</VBox>
