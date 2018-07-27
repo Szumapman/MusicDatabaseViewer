@@ -1,15 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
+<!--
+  ~ Created by Paweł Szumański
+  -->
+
 <BorderPane fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pawelszumanski.controllers.MainController">
-   <padding>
-      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-   </padding>
    <top>
       <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="790.0" BorderPane.alignment="CENTER">
+         <MenuBar>
+           <menus>
+             <Menu fx:id="fileMenu" mnemonicParsing="false" text="%file.menu">
+               <items>
+                 <MenuItem fx:id="closeAppMenuItem" mnemonicParsing="false" onAction="#closeAppOnAction" text="%close.app.menuitem" />
+               </items>
+             </Menu>
+             <Menu fx:id="setingsMenu" mnemonicParsing="false" text="%settings.menu">
+                  <items>
+                     <Menu fx:id="appearanceSubMenu" mnemonicParsing="false" text="%appearance.submenu">
+                       <items>
+                           <RadioMenuItem fx:id="Caspian" mnemonicParsing="false" onAction="#setCaspianStyleOnAction" text="%caspian.style">
+                              <toggleGroup>
+                                 <ToggleGroup fx:id="styleGroup" />
+                              </toggleGroup>
+                           </RadioMenuItem>
+                           <RadioMenuItem fx:id="Modena" mnemonicParsing="false" onAction="#setModenaStyleOnAction" selected="true" text="%modena.style" toggleGroup="$styleGroup" />
+                       </items>
+                     </Menu>
+                     <SeparatorMenuItem mnemonicParsing="false" />
+                     <CheckMenuItem fx:id="AlwaysOnTop" mnemonicParsing="false" onAction="#alwaysOnTopOnAction" text="%alwaysOnTom.checkmenuitem" />
+                  </items>
+             </Menu>
+             <Menu fx:id="helpMenu" mnemonicParsing="false" text="%help.menu">
+               <items>
+                 <MenuItem fx:id="AboutApp" mnemonicParsing="false" onAction="#aboutAppOnAction" text="%aboutApp.menuitem" />
+               </items>
+             </Menu>
+           </menus>
+         </MenuBar>
           <fx:include fx:id="topMenuButtons" source="TopMenuButtons.fxml" />
       </VBox>
    </top>
