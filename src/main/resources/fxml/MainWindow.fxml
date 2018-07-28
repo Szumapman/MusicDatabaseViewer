@@ -14,40 +14,40 @@
   ~ Created by Paweł Szumański
   -->
 
-<BorderPane fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pawelszumanski.controllers.MainController">
+<BorderPane fx:_id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pawelszumanski.controllers.MainController">
    <top>
       <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="790.0" BorderPane.alignment="CENTER">
          <MenuBar>
            <menus>
-             <Menu fx:id="fileMenu" mnemonicParsing="false" text="%file.menu">
+             <Menu fx:_id="fileMenu" mnemonicParsing="false" text="%file.menu">
                <items>
-                 <MenuItem fx:id="closeAppMenuItem" mnemonicParsing="false" onAction="#closeAppOnAction" text="%close.app.menuitem" />
+                 <MenuItem fx:_id="closeAppMenuItem" mnemonicParsing="false" onAction="#closeAppOnAction" text="%close.app.menuitem" />
                </items>
              </Menu>
-             <Menu fx:id="setingsMenu" mnemonicParsing="false" text="%settings.menu">
+             <Menu fx:_id="setingsMenu" mnemonicParsing="false" text="%settings.menu">
                   <items>
-                     <Menu fx:id="appearanceSubMenu" mnemonicParsing="false" text="%appearance.submenu">
+                     <Menu fx:_id="appearanceSubMenu" mnemonicParsing="false" text="%appearance.submenu">
                        <items>
-                           <RadioMenuItem fx:id="Caspian" mnemonicParsing="false" onAction="#setCaspianStyleOnAction" text="%caspian.style">
+                           <RadioMenuItem fx:_id="Caspian" mnemonicParsing="false" onAction="#setCaspianStyleOnAction" text="%caspian.style">
                               <toggleGroup>
-                                 <ToggleGroup fx:id="styleGroup" />
+                                 <ToggleGroup fx:_id="styleGroup" />
                               </toggleGroup>
                            </RadioMenuItem>
-                           <RadioMenuItem fx:id="Modena" mnemonicParsing="false" onAction="#setModenaStyleOnAction" selected="true" text="%modena.style" toggleGroup="$styleGroup" />
+                           <RadioMenuItem fx:_id="Modena" mnemonicParsing="false" onAction="#setModenaStyleOnAction" selected="true" text="%modena.style" toggleGroup="$styleGroup" />
                        </items>
                      </Menu>
                      <SeparatorMenuItem mnemonicParsing="false" />
-                     <CheckMenuItem fx:id="AlwaysOnTop" mnemonicParsing="false" onAction="#alwaysOnTopOnAction" text="%alwaysOnTom.checkmenuitem" />
+                     <CheckMenuItem fx:_id="AlwaysOnTop" mnemonicParsing="false" onAction="#alwaysOnTopOnAction" text="%alwaysOnTom.checkmenuitem" />
                   </items>
              </Menu>
-             <Menu fx:id="helpMenu" mnemonicParsing="false" text="%help.menu">
+             <Menu fx:_id="helpMenu" mnemonicParsing="false" text="%help.menu">
                <items>
-                 <MenuItem fx:id="AboutApp" mnemonicParsing="false" onAction="#aboutAppOnAction" text="%aboutApp.menuitem" />
+                 <MenuItem fx:_id="AboutApp" mnemonicParsing="false" onAction="#aboutAppOnAction" text="%aboutApp.menuitem" />
                </items>
              </Menu>
            </menus>
          </MenuBar>
-          <fx:include fx:id="topMenuButtons" source="TopMenuButtons.fxml" />
+          <fx:include fx:_id="topMenuButtons" source="TopMenuButtons.fxml" />
       </VBox>
    </top>
 </BorderPane>
