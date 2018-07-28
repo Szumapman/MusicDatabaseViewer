@@ -4,12 +4,14 @@
 
 package com.pawelszumanski.database.models;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "albums")
 public class Albums implements BaseModel {
-    public static final String ARTIST_ID = "artists_id";
+    public static final String ARTISTS_ID = "artists_id";
 
     public Albums(){}
 
@@ -19,8 +21,15 @@ public class Albums implements BaseModel {
     @DatabaseField(columnName = "name", canBeNull = false)
     private String name;
 
-    @DatabaseField(columnName = ARTIST_ID, foreign = true, foreignAutoRefresh = true, canBeNull = false)
+    @DatabaseField(columnName = ARTISTS_ID, foreign = true, foreignAutoRefresh = true, foreignAutoCreate = true, canBeNull = false)
     private Artists artist;
+
+    @ForeignCollectionField(columnName = "songs_id")
+   private ForeignCollection<Songs> songs;
+
+    public static String getArtistsId() {
+        return ARTISTS_ID;
+    }
 
     public int get_id() {
         return _id;
@@ -44,5 +53,13 @@ public class Albums implements BaseModel {
 
     public void setArtist(Artists artist) {
         this.artist = artist;
+    }
+
+    public ForeignCollection<Songs> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(ForeignCollection<Songs> songs) {
+        this.songs = songs;
     }
 }

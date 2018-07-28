@@ -9,7 +9,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "songs")
 public class Songs implements BaseModel{
-    public static final String ALBUM_ID = "albums_id";
+    public static final String ALBUM_ID = "album";
 
     public Songs(){}
 
@@ -22,7 +22,7 @@ public class Songs implements BaseModel{
     @DatabaseField(columnName = "title", canBeNull = false)
     private String title;
 
-    @DatabaseField(columnName = ALBUM_ID, foreign = true, foreignAutoRefresh = true, canBeNull = false)
+    @DatabaseField(columnName = ALBUM_ID, foreign = true, foreignAutoRefresh = true, foreignAutoCreate = true, canBeNull = false)
     private Albums album;
 
     public int get_id() {
@@ -55,5 +55,9 @@ public class Songs implements BaseModel{
 
     public void setAlbum(Albums album) {
         this.album = album;
+    }
+
+    public static String getAlbumId() {
+        return ALBUM_ID;
     }
 }
