@@ -11,7 +11,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "albums")
 public class Albums implements BaseModel {
-    public static final String ARTISTS_ID = "artists_id";
+    public static final String ARTISTS_ID = "artist";
 
     public Albums(){}
 
