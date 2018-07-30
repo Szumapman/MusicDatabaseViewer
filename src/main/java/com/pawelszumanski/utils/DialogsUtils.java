@@ -6,6 +6,8 @@ package com.pawelszumanski.utils;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -45,8 +47,31 @@ public class DialogsUtils {
         errorAlert.showAndWait();
     }
 
-    private static void setIcon(Alert alert) {
+    private static void setIcon(Dialog alert) {
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image(DialogsUtils.class.getResource(ICONS_MUSIC_BASE_32_PNG).toString()));
+    }
+
+    public static String editDialog(String name) {
+        TextInputDialog dialog = new TextInputDialog(name);
+        setIcon(dialog);
+        dialog.setTitle(resourceBundle.getString("edit.title"));
+        dialog.setHeaderText(resourceBundle.getString("edit.header"));
+        dialog.setContentText(resourceBundle.getString("edit.content"));
+        Optional<String> result = dialog.showAndWait();
+        if(result.isPresent()){
+            return result.get();
+        }
+        return null;
+    }
+
+    public static boolean deleteArtistConfirmationDialog(String artistToDelete) {
+        Alert deleteArtistConfirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        setIcon(deleteArtistConfirmationAlert);
+        deleteArtistConfirmationAlert.setTitle(resourceBundle.getString("delete.title"));
+        deleteArtistConfirmationAlert.setHeaderText(resourceBundle.getString("delete.header") + " " + artistToDelete + "?");
+        deleteArtistConfirmationAlert.setContentText(resourceBundle.getString("delete.context"));
+        Optional<ButtonType> result = deleteArtistConfirmationAlert.showAndWait();
+        return result.get() == ButtonType.OK;
     }
 }

@@ -36,6 +36,24 @@ public class ArtistFxModel {
         init();
     }
 
+    public void updateArtistInDataBase() throws ApplicationExceptions {
+        ArtistsDao artistsDao = new ArtistsDao();
+        Artists tempArtist = artistsDao.findByID(Artists.class, getArtist().getId());
+        tempArtist.setName(getArtist().getName());
+        artistsDao.createOrUpdate(tempArtist);
+        init();
+    }
+
+
+    public void deleteArtistById() throws ApplicationExceptions {
+        ArtistsDao artistsDao = new ArtistsDao();
+        artistsDao.deleteById(Artists.class, this.getArtist().getId());
+        /*
+        Uzupełnić usuwanie albumów i dalej piosenek.
+         */
+        this.init();
+    }
+
     private void initRoot(List<Artists> artists) {
         this.root.getChildren().clear();
         artists.forEach(a-> {
@@ -82,4 +100,7 @@ public class ArtistFxModel {
     public void setRoot(TreeItem<String> root) {
         this.root = root;
     }
+
+
+
 }
