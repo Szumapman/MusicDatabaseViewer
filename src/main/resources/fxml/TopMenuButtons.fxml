@@ -15,7 +15,7 @@
    <children>
       <ToggleButton mnemonicParsing="false" onAction="#openSongs" prefHeight="80.0" prefWidth="160.0" text="%songs.button">
          <toggleGroup>
-            <ToggleGroup fx:_id="toggleButtonsGroup" />
+            <ToggleGroup fx:id="toggleButtonsGroup" />
          </toggleGroup>
          <graphic>
             <ImageView fitHeight="72.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true">
