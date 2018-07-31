@@ -56,8 +56,8 @@ public class ArtistsController {
 
     private void bindings() {
         this.saveArtistButton.disableProperty().bind(artistTextField.textProperty().isEmpty());
-        this.editArtistButton.disableProperty().bind(this.artistFxModel.artistProperty().isNull());
-        this.deleteArtistButton.disableProperty().bind(this.artistFxModel.artistProperty().isNull());
+        this.editArtistButton.disableProperty().bind(this.artistFxModel.artistsFxObjectPropertyProperty().isNull());
+        this.deleteArtistButton.disableProperty().bind(this.artistFxModel.artistsFxObjectPropertyProperty().isNull());
     }
 
 
@@ -73,14 +73,14 @@ public class ArtistsController {
 
     @FXML
     private void artistsComboBoxOnAction() {
-        this.artistFxModel.setArtist(this.artistsComboBox.getSelectionModel().getSelectedItem());
+        this.artistFxModel.setArtistsFxObjectProperty(this.artistsComboBox.getSelectionModel().getSelectedItem());
     }
 
     @FXML
     private void editArtistOnAction() {
-        String newArtistName = DialogsUtils.editDialog(this.artistFxModel.getArtist().getName());
+        String newArtistName = DialogsUtils.editDialog(this.artistFxModel.getArtistsFxObjectProperty().getName());
         if(newArtistName != null){
-            this.artistFxModel.getArtist().setName(newArtistName);
+            this.artistFxModel.getArtistsFxObjectProperty().setName(newArtistName);
             try {
                 this.artistFxModel.updateArtistInDataBase();
             } catch (ApplicationExceptions applicationExceptions) {
@@ -91,14 +91,15 @@ public class ArtistsController {
 
     @FXML
     private void deleteArtistOnAction() {
-        String artistToDelete = this.artistFxModel.getArtist().getName();
-        boolean deleteArtist = DialogsUtils.deleteArtistConfirmationDialog(artistToDelete);
+        String artistToDelete = this.artistFxModel.getArtistsFxObjectProperty().getName();
+        boolean deleteArtist = DialogsUtils.deleteConfirmationDialog(artistToDelete);
         if(deleteArtist){
             try {
                 this.artistFxModel.deleteArtistById();
             } catch (ApplicationExceptions applicationExceptions) {
                 DialogsUtils.errorDialog(applicationExceptions.getMessage());
             }
+
         }
     }
 }

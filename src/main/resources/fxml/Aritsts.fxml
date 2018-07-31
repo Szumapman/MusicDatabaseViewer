@@ -25,14 +25,14 @@
          </padding></TreeView>
       <HBox alignment="CENTER" prefHeight="91.0" prefWidth="600.0" spacing="10.0">
          <children>
-            <Label text="%add.artist" />
+            <Label text="%add.artistsFxObjectProperty" />
             <TextField fx:id="artistTextField" />
             <Button fx:id="saveArtistButton" mnemonicParsing="false" onAction="#saveArtistOnAction" text="%save.button" />
             <Separator orientation="VERTICAL" prefHeight="200.0" />
-            <Label text="%choose.artist" />
+            <Label text="%choose.artistsFxObjectProperty" />
             <ComboBox fx:id="artistsComboBox" onAction="#artistsComboBoxOnAction" prefWidth="150.0" />
-            <Button fx:id="editArtistButton" mnemonicParsing="false" onAction="#editArtistOnAction" text="%edit.artist" />
-            <Button fx:id="deleteArtistButton" mnemonicParsing="false" onAction="#deleteArtistOnAction" text="%delete.artist" />
+            <Button fx:id="editArtistButton" mnemonicParsing="false" onAction="#editArtistOnAction" text="%edit.artistsFxObjectProperty" />
+            <Button fx:id="deleteArtistButton" mnemonicParsing="false" onAction="#deleteArtistOnAction" text="%delete.artistsFxObjectProperty" />
          </children>
          <VBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

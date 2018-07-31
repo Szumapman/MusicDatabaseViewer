@@ -33,8 +33,12 @@ public abstract class CommonDao {
             dao.createOrUpdate((T) baseModel);
         } catch (SQLException e) {
             LOGGER.warn(e.getCause().getMessage());
-            throw new ApplicationExceptions(FxmlUtils.getResourceBundle().getString("error.create.update"));
-        } finally {
+            if(e.getCause().getMessage().contains("UNIQUE")){
+                throw new ApplicationExceptions(FxmlUtils.getResourceBundle().getString("error.data.database"));
+            } else {
+                throw new ApplicationExceptions(FxmlUtils.getResourceBundle().getString("error.create.update"));
+            }
+        }finally {
             this.closeDbConnection();
         }
     }
@@ -86,6 +90,8 @@ public abstract class CommonDao {
             this.closeDbConnection();
         }
     }
+
+
 
     public <T extends BaseModel, I> List<T> queryForAll(Class<T> cls) throws ApplicationExceptions {
         Dao<T, I> dao = getDao(cls);

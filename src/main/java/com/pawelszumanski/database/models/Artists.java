@@ -17,7 +17,7 @@ public class Artists implements BaseModel {
     @DatabaseField(generatedId = true)
     private int _id;
 
-    @DatabaseField(columnName = "name", canBeNull = false)
+    @DatabaseField(columnName = "name", canBeNull = false, unique = true)
     private String name;
 
     @ForeignCollectionField(columnName = "albums_id")

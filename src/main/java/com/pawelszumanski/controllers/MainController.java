@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 public class MainController {
 
+
     @FXML
     private BorderPane mainWindow;
 
@@ -27,6 +28,7 @@ public class MainController {
     private void initialize(){
         topMenuButtonsController.setMainController(this);
     }
+
 
     public void setCenter(String fxmlPath){
         mainWindow.setCenter(FxmlUtils.fxmlLoader(fxmlPath));

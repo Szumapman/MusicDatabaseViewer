@@ -23,10 +23,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+//        Locale.setDefault(new Locale("en"));
         Pane pane = FxmlUtils.fxmlLoader(MAIN_WINDOW_FXML);
         Scene scene = new Scene(pane);
         primaryStage.setScene(scene);
-//        primaryStage.getIcons().add(new Image(this.getClass().getResource(ICONS_MUSIC_BASE_16_PNG).toString()));
         primaryStage.getIcons().add(new Image(this.getClass().getResource(ICONS_MUSIC_BASE_32_PNG).toString()));
         primaryStage.setTitle(FxmlUtils.getResourceBundle().getString("title.app"));
         primaryStage.setOnCloseRequest(event -> {

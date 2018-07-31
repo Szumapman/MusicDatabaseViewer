@@ -65,13 +65,13 @@ public class DialogsUtils {
         return null;
     }
 
-    public static boolean deleteArtistConfirmationDialog(String artistToDelete) {
-        Alert deleteArtistConfirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        setIcon(deleteArtistConfirmationAlert);
-        deleteArtistConfirmationAlert.setTitle(resourceBundle.getString("delete.title"));
-        deleteArtistConfirmationAlert.setHeaderText(resourceBundle.getString("delete.header") + " " + artistToDelete + "?");
-        deleteArtistConfirmationAlert.setContentText(resourceBundle.getString("delete.context"));
-        Optional<ButtonType> result = deleteArtistConfirmationAlert.showAndWait();
+    public static boolean deleteConfirmationDialog(String dataNameToDelete) {
+        Alert deleteConfirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        setIcon(deleteConfirmationAlert);
+        deleteConfirmationAlert.setTitle(resourceBundle.getString("delete.title"));
+        deleteConfirmationAlert.setHeaderText(resourceBundle.getString("delete.header") + " " + dataNameToDelete + "?");
+        deleteConfirmationAlert.setContentText(resourceBundle.getString("delete.context"));
+        Optional<ButtonType> result = deleteConfirmationAlert.showAndWait();
         return result.get() == ButtonType.OK;
     }
 }

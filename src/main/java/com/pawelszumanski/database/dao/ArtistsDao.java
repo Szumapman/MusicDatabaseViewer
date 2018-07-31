@@ -8,4 +8,5 @@ public class ArtistsDao extends CommonDao {
     public ArtistsDao(){
         super();
     }
+
 }
