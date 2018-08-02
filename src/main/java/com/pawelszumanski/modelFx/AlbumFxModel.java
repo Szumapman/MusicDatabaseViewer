@@ -31,14 +31,15 @@ public class AlbumFxModel {
 
     private ObservableList<AlbumsFx> albumsList = FXCollections.observableArrayList();
     private ObservableList<ArtistsFx> artistsFxObservableList = FXCollections.observableArrayList();
-    private ObjectProperty<AlbumsFx> albumsFxObjectProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<AlbumsFx> albumsFxObjectProperty = new SimpleObjectProperty<>(new AlbumsFx());
     private TreeItem<String> root = new TreeItem<>();
 
     public void init() throws ApplicationExceptions {
-        initArtistsFxObservableList();
+
         AlbumsDao albumsDao = new AlbumsDao();
         List<Albums> albums = albumsDao.queryForAll(Albums.class);
         initAlbumsList(albums);
+        initArtistsFxObservableList();
         initRoot(albums);
     }
 
@@ -52,10 +53,10 @@ public class AlbumFxModel {
 
     }
 
-    public void saveAlbumInDataBase(String name, int artistId) throws ApplicationExceptions {
+    public void saveAlbumInDataBase(String name) throws ApplicationExceptions {
         AlbumsDao albumsDao = new AlbumsDao();
         ArtistsDao artistsDao = new ArtistsDao();
-        Artists artist = artistsDao.findByID(Artists.class, artistId);
+        Artists artist = artistsDao.findByID(Artists.class, this.getAlbumsFxObjectProperty().getArtistFx().getId());
         Albums album = new Albums();
         album.setName(name);
         album.setArtist(artist);
@@ -110,6 +111,14 @@ public class AlbumFxModel {
 
     public ObjectProperty<AlbumsFx> albumsFxObjectPropertyProperty() {
         return albumsFxObjectProperty;
+    }
+
+    public ObservableList<ArtistsFx> getArtistsFxObservableList() {
+        return artistsFxObservableList;
+    }
+
+    public void setArtistsFxObservableList(ObservableList<ArtistsFx> artistsFxObservableList) {
+        this.artistsFxObservableList = artistsFxObservableList;
     }
 
     public void setAlbumsFxObjectProperty(AlbumsFx albumsFxObjectProperty) {

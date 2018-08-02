@@ -127,6 +127,8 @@ public class ArtistFxModel {
         this.artistsFxObjectProperty.set(artistsFxObjectProperty);
     }
 
+
+
     public TreeItem<String> getRoot() {
         return root;
     }
