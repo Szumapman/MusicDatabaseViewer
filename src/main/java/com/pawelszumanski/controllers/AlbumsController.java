@@ -9,10 +9,19 @@ import com.pawelszumanski.modelFx.AlbumsFx;
 import com.pawelszumanski.modelFx.ArtistFxModel;
 import com.pawelszumanski.modelFx.ArtistsFx;
 import com.pawelszumanski.utils.DialogsUtils;
+import com.pawelszumanski.utils.FxmlUtils;
 import com.pawelszumanski.utils.exceptions.ApplicationExceptions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+
+import static com.pawelszumanski.utils.PathUtils.EDIT_ALBUM_FXML;
 
 public class AlbumsController {
 
@@ -85,6 +94,23 @@ public class AlbumsController {
 
     @FXML
     private void editAlbumOnAction(ActionEvent actionEvent) {
+        FXMLLoader loader = FxmlUtils.getLoader(EDIT_ALBUM_FXML);
+        Scene scene = null;
+        try {
+            scene = new Scene(loader.load());
+        } catch (IOException e) {
+            DialogsUtils.errorDialog(e.getMessage());
+            e.printStackTrace();
+        }
+        EditAlbumController editAlbumController = loader.getController();
+        editAlbumController.getAlbumFxModel().setAlbumsFxObjectProperty(this.albumFxModel.getAlbumsFxObjectProperty());
+        editAlbumController.getArtistFxModel().setArtistsFxObjectProperty(this.artistFxModel.getArtistsFxObjectProperty());
+        System.out.println(editAlbumController.getArtistFxModel().artistsFxObjectPropertyProperty());
+        editAlbumController.binding();
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
     }
 
     @FXML

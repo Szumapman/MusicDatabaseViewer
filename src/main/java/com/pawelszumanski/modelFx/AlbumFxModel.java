@@ -10,6 +10,7 @@ import com.pawelszumanski.database.models.Albums;
 import com.pawelszumanski.database.models.Artists;
 import com.pawelszumanski.utils.FxmlUtils;
 import com.pawelszumanski.utils.converters.ConvertAlbum;
+import com.pawelszumanski.utils.converters.ConvertArtist;
 import com.pawelszumanski.utils.exceptions.ApplicationExceptions;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -29,14 +30,26 @@ public class AlbumFxModel {
     private static ResourceBundle resourceBundle = FxmlUtils.getResourceBundle();
 
     private ObservableList<AlbumsFx> albumsList = FXCollections.observableArrayList();
+    private ObservableList<ArtistsFx> artistsFxObservableList = FXCollections.observableArrayList();
     private ObjectProperty<AlbumsFx> albumsFxObjectProperty = new SimpleObjectProperty<>();
     private TreeItem<String> root = new TreeItem<>();
 
     public void init() throws ApplicationExceptions {
+        initArtistsFxObservableList();
         AlbumsDao albumsDao = new AlbumsDao();
         List<Albums> albums = albumsDao.queryForAll(Albums.class);
         initAlbumsList(albums);
         initRoot(albums);
+    }
+
+    private void initArtistsFxObservableList() throws ApplicationExceptions {
+        ArtistsDao artistsDao = new ArtistsDao();
+        List<Artists> artistsList = artistsDao.queryForAll(Artists.class);
+        artistsList.forEach(artist -> {
+            ArtistsFx artistsFx = ConvertArtist.convertToArtistFx(artist);
+            this.artistsFxObservableList.add(artistsFx);
+        });
+
     }
 
     public void saveAlbumInDataBase(String name, int artistId) throws ApplicationExceptions {

@@ -4,14 +4,24 @@
 
 package com.pawelszumanski.modelFx;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 public class AlbumsFx {
-    IntegerProperty id = new SimpleIntegerProperty();
-    StringProperty name = new SimpleStringProperty();
+    private IntegerProperty id = new SimpleIntegerProperty();
+    private StringProperty name = new SimpleStringProperty();
+    private ObjectProperty<ArtistsFx> artistFx = new SimpleObjectProperty<>();
+
+    public ArtistsFx getArtistFx() {
+        return artistFx.get();
+    }
+
+    public ObjectProperty<ArtistsFx> artistFxProperty() {
+        return artistFx;
+    }
+
+    public void setArtistFx(ArtistsFx artistFx) {
+        this.artistFx.set(artistFx);
+    }
 
     public int getId() {
         return id.get();
