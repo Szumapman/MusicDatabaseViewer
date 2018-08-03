@@ -6,11 +6,14 @@ package com.pawelszumanski.modelFx;
 
 import com.pawelszumanski.database.dao.AlbumsDao;
 import com.pawelszumanski.database.dao.ArtistsDao;
+import com.pawelszumanski.database.dao.SongsDao;
 import com.pawelszumanski.database.models.Albums;
 import com.pawelszumanski.database.models.Artists;
+import com.pawelszumanski.database.models.Songs;
 import com.pawelszumanski.utils.FxmlUtils;
 import com.pawelszumanski.utils.converters.ConvertAlbum;
 import com.pawelszumanski.utils.converters.ConvertArtist;
+import com.pawelszumanski.utils.converters.ConvertSong;
 import com.pawelszumanski.utils.exceptions.ApplicationExceptions;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -31,6 +34,7 @@ public class AlbumFxModel {
 
     private ObservableList<AlbumsFx> albumsList = FXCollections.observableArrayList();
     private ObservableList<ArtistsFx> artistsFxObservableList = FXCollections.observableArrayList();
+    private ObservableList<SongsFx> songsFxObservableList = FXCollections.observableArrayList();
     private ObjectProperty<AlbumsFx> albumsFxObjectProperty = new SimpleObjectProperty<>(new AlbumsFx());
     private TreeItem<String> root = new TreeItem<>();
 
@@ -49,6 +53,23 @@ public class AlbumFxModel {
         artistsList.forEach(artist -> {
             ArtistsFx artistsFx = ConvertArtist.convertToArtistFx(artist);
             this.artistsFxObservableList.add(artistsFx);
+        });
+
+    }
+
+    public void initSongsFxObservableList() throws ApplicationExceptions {
+        songsFxObservableList.clear();
+        SongsDao songsDao = new SongsDao();
+        List<Songs> songsList = songsDao.queryForAll(Songs.class);
+        songsList.forEach(song -> {
+
+            if(song.getAlbum().get_id() == albumsFxObjectProperty.get().getId()){
+                SongsFx songsFx = ConvertSong.convertToSongsFx(song);
+                songsFxObservableList.add(songsFx);
+                System.out.println(songsFx);
+            }
+
+            songsFxObservableList.sort((songsFx1, songsFx2) -> songsFx1.getTrack() -  songsFx2.getTrack());
         });
 
     }
@@ -136,6 +157,14 @@ public class AlbumFxModel {
 
     public void setAlbumsFxObjectProperty(AlbumsFx albumsFxObjectProperty) {
         this.albumsFxObjectProperty.set(albumsFxObjectProperty);
+    }
+
+    public ObservableList<SongsFx> getSongsFxObservableList() {
+        return songsFxObservableList;
+    }
+
+    public void setSongsFxObservableList(ObservableList<SongsFx> songsFxObservableList) {
+        this.songsFxObservableList = songsFxObservableList;
     }
 
     public TreeItem<String> getRoot() {

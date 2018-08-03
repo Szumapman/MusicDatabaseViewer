@@ -109,6 +109,11 @@ public class AlbumsController {
         }
         EditAlbumController editAlbumController = loader.getController();
         editAlbumController.getAlbumFxModel().setAlbumsFxObjectProperty(this.albumFxModel.getAlbumsFxObjectProperty());
+        try {
+            editAlbumController.getAlbumFxModel().initSongsFxObservableList();
+        } catch (ApplicationExceptions applicationExceptions) {
+            DialogsUtils.errorDialog(applicationExceptions.getMessage());
+        }
         editAlbumController.binding();
         Stage stage = new Stage();
         stage.setScene(scene);
