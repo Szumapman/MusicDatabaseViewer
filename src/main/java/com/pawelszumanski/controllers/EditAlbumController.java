@@ -5,15 +5,12 @@
 package com.pawelszumanski.controllers;
 
 import com.pawelszumanski.modelFx.AlbumFxModel;
-import com.pawelszumanski.modelFx.ArtistFxModel;
 import com.pawelszumanski.modelFx.ArtistsFx;
+import com.pawelszumanski.modelFx.SongsFx;
 import com.pawelszumanski.utils.DialogsUtils;
 import com.pawelszumanski.utils.exceptions.ApplicationExceptions;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 public class EditAlbumController {
     @FXML
@@ -28,53 +25,55 @@ public class EditAlbumController {
     @FXML
     private Button cancelButton;
 
+    @FXML
+    private TableView<SongsFx> songsTableView;
+
+    @FXML
+    private TableColumn<SongsFx, String> songsTableColumn;
+
     private AlbumFxModel albumFxModel;
-    private ArtistFxModel artistFxModel;
-
-
+    private AlbumsController albumsController;
 
     @FXML
     public void initialize(){
         this.albumFxModel = new AlbumFxModel();
-        this.artistFxModel = new ArtistFxModel();
         try {
             albumFxModel.init();
-            artistFxModel.init();
         } catch (ApplicationExceptions applicationExceptions) {
             DialogsUtils.errorDialog(applicationExceptions.getMessage());
         }
+
+//        binding();
 
 
     }
 
     protected void binding() {
+        this.artistsComboBox.setItems(this.albumFxModel.getArtistsFxObservableList());
         this.albumTitleTextField.textProperty().bindBidirectional(this.albumFxModel.getAlbumsFxObjectProperty().nameProperty());
-        this.artistsComboBox.setItems(this.artistFxModel.getArtistsList());
-        System.out.println();
-        this.artistsComboBox.valueProperty().bindBidirectional(this.artistFxModel.artistsFxObjectPropertyProperty());
+        this.artistsComboBox.valueProperty().bindBidirectional(this.albumFxModel.getAlbumsFxObjectProperty().artistFxProperty());
         this.saveButton.disableProperty().bind(this.albumTitleTextField.textProperty().isEmpty());
     }
 
     @FXML
-    private void artistsComboBoxOnAction(ActionEvent event) {
-
+    private void artistsComboBoxOnAction() {
+//        this.albumFxModel.getAlbumsFxObjectProperty().setArtistFx(this.artistsComboBox.getSelectionModel().getSelectedItem());
     }
 
-    @FXML
-    private void cancelButtonOnAction(ActionEvent event) {
 
-    }
 
-    @FXML
-    private void saveButtonOnAction(ActionEvent event) {
-
-    }
-
-    public AlbumFxModel getAlbumFxModel() {
+    protected AlbumFxModel getAlbumFxModel() {
         return albumFxModel;
     }
 
-    public ArtistFxModel getArtistFxModel() {
-        return artistFxModel;
+    protected Button getSaveButton() {
+        return saveButton;
     }
+
+    protected Button getCancelButton() {
+        return cancelButton;
+    }
+
+
+
 }

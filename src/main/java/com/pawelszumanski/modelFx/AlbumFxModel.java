@@ -35,15 +35,15 @@ public class AlbumFxModel {
     private TreeItem<String> root = new TreeItem<>();
 
     public void init() throws ApplicationExceptions {
-
+        initArtistsFxObservableList();
         AlbumsDao albumsDao = new AlbumsDao();
         List<Albums> albums = albumsDao.queryForAll(Albums.class);
         initAlbumsList(albums);
-        initArtistsFxObservableList();
         initRoot(albums);
     }
 
     private void initArtistsFxObservableList() throws ApplicationExceptions {
+        artistsFxObservableList.clear();
         ArtistsDao artistsDao = new ArtistsDao();
         List<Artists> artistsList = artistsDao.queryForAll(Artists.class);
         artistsList.forEach(artist -> {
@@ -61,6 +61,17 @@ public class AlbumFxModel {
         album.setName(name);
         album.setArtist(artist);
         albumsDao.createOrUpdate(album);
+        init();
+    }
+
+    public void updateAlbumInDataBase() throws ApplicationExceptions {
+        AlbumsDao albumsDao = new AlbumsDao();
+        Albums tempAlbum = albumsDao.findByID(Albums.class, getAlbumsFxObjectProperty().getId());
+        tempAlbum.setName(getAlbumsFxObjectProperty().getName());
+        ArtistsDao artistsDao = new ArtistsDao();
+        Artists tempArtist = artistsDao.findByID(Artists.class, getAlbumsFxObjectProperty().getArtistFx().getId());
+        tempAlbum.setArtist(tempArtist);
+        albumsDao.createOrUpdate(tempAlbum);
         init();
     }
 
@@ -91,11 +102,13 @@ public class AlbumFxModel {
         this.albumsList.clear();
         albums.forEach(a->{
             AlbumsFx albumsFx = ConvertAlbum.convertToAlbumFx(a);
-            if(!albumsFx.getName().equals(resourceBundle.getString("unknown.album"))){
+//            if(!albumsFx.getName().equals(resourceBundle.getString("unknown.album"))){
                 albumsList.add(albumsFx);
-            }
+//            }
+//            System.out.println(albumsFx.getArtistFx() + " " +albumsFx.getArtistFx().getId());
         });
     }
+
 
     public ObservableList<AlbumsFx> getAlbumsList() {
         return albumsList;

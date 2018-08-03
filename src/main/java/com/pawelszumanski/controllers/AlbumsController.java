@@ -6,7 +6,6 @@ package com.pawelszumanski.controllers;
 
 import com.pawelszumanski.modelFx.AlbumFxModel;
 import com.pawelszumanski.modelFx.AlbumsFx;
-import com.pawelszumanski.modelFx.ArtistFxModel;
 import com.pawelszumanski.modelFx.ArtistsFx;
 import com.pawelszumanski.utils.DialogsUtils;
 import com.pawelszumanski.utils.FxmlUtils;
@@ -53,19 +52,18 @@ public class AlbumsController {
     private Button deleteAlbumButton;
 
     private AlbumFxModel albumFxModel;
-    private ArtistFxModel artistFxModel;
 
     @FXML
     public void initialize(){
         this.albumFxModel = new AlbumFxModel();
-        this.artistFxModel = new ArtistFxModel();
         try {
             albumFxModel.init();
-            artistFxModel.init();
+
         } catch (ApplicationExceptions applicationExceptions) {
             DialogsUtils.errorDialog(applicationExceptions.getMessage());
         }
         bindings();
+        this.albumComboBoxOnAction();
     }
 
     private void bindings() {
@@ -78,12 +76,13 @@ public class AlbumsController {
     }
 
     @FXML
-    private void artistComboBoxOnAction(ActionEvent actionEvent) {
+    private void artistComboBoxOnAction() {
         this.albumFxModel.getAlbumsFxObjectProperty().setArtistFx(this.artistComboBox.getSelectionModel().getSelectedItem());
+
     }
 
     @FXML
-    private void saveAlbumOnAction(ActionEvent actionEvent) {
+    private void saveAlbumOnAction() {
         try {
             this.albumFxModel.saveAlbumInDataBase(albumsTextField.getText());
         } catch (ApplicationExceptions applicationExceptions) {
@@ -94,7 +93,7 @@ public class AlbumsController {
     }
 
     @FXML
-    private void albumComboBoxOnAction(ActionEvent actionEvent) {
+    private void albumComboBoxOnAction() {
         this.albumFxModel.setAlbumsFxObjectProperty(this.albumComboBox.getSelectionModel().getSelectedItem());
     }
 
@@ -110,11 +109,29 @@ public class AlbumsController {
         }
         EditAlbumController editAlbumController = loader.getController();
         editAlbumController.getAlbumFxModel().setAlbumsFxObjectProperty(this.albumFxModel.getAlbumsFxObjectProperty());
-        editAlbumController.getArtistFxModel().setArtistsFxObjectProperty(this.artistFxModel.getArtistsFxObjectProperty());
-        System.out.println(editAlbumController.getArtistFxModel().artistsFxObjectPropertyProperty());
         editAlbumController.binding();
         Stage stage = new Stage();
         stage.setScene(scene);
+        stage.setIconified(false);
+        stage.setResizable(false);
+        Button saveButtonEditAlbumController = editAlbumController.getSaveButton();
+        saveButtonEditAlbumController.setOnAction(e -> {
+            try {
+                editAlbumController.getAlbumFxModel().updateAlbumInDataBase();
+            } catch (ApplicationExceptions applicationExceptions) {
+                DialogsUtils.errorDialog(applicationExceptions.getMessage());
+            }
+            try {
+                albumFxModel.init();
+            } catch (ApplicationExceptions applicationExceptions) {
+                applicationExceptions.printStackTrace();
+            }
+            stage.close();
+        });
+        Button cancelButtonEditAlbumController = editAlbumController.getCancelButton();
+        cancelButtonEditAlbumController.setOnAction(e -> {
+            stage.close();
+        });
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.showAndWait();
     }
@@ -137,7 +154,7 @@ public class AlbumsController {
         if(((CheckBox)actionEvent.getSource()).isSelected()){
             ArtistsFx artistsFx = null;
             for(ArtistsFx artistFXFromList : this.albumFxModel.getArtistsFxObservableList()){
-                if(artistFXFromList.getName().equals(resourceBundle.getString("unknown.artists"))){
+                if(artistFXFromList != null && artistFXFromList.getName().equals(resourceBundle.getString("unknown.artists"))){
                     artistsFx = artistFXFromList;
                     break;
                 }
@@ -145,14 +162,15 @@ public class AlbumsController {
             this.artistComboBox.setValue(artistsFx);
             this.artistComboBox.setDisable(true);
 
-//            try {
-//                this.artistFxModel.setUnknownArtist();
-//            } catch (ApplicationExceptions applicationExceptions) {
-//                DialogsUtils.errorDialog(applicationExceptions.getMessage());
-//            }
         } else {
             this.artistComboBox.setDisable(false);
 
         }
     }
+
+    protected AlbumFxModel getAlbumFxModel() {
+        return albumFxModel;
+    }
+
+
 }
