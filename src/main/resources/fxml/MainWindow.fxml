@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -50,4 +51,7 @@
           <fx:include fx:id="topMenuButtons" source="TopMenuButtons.fxml" />
       </VBox>
    </top>
+   <center>
+      <ProgressIndicator fx:id="progressIndicator" BorderPane.alignment="CENTER" />
+   </center>
 </BorderPane>

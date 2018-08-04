@@ -9,7 +9,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -78,15 +77,4 @@ public class DialogsUtils {
         return result.get() == ButtonType.OK;
     }
 
-    public static void operationInProgressShow(){
-        operationInProgress = new Alert(Alert.AlertType.INFORMATION);
-        operationInProgress.setTitle(resourceBundle.getString("operation.in.progress"));
-        operationInProgress.setHeaderText(resourceBundle.getString("operation.in.progress"));
-        operationInProgress.initModality(Modality.APPLICATION_MODAL);
-        operationInProgress.show();
-    }
-
-    public static void operationInProgressClose() {
-        operationInProgress.close();
-    }
 }

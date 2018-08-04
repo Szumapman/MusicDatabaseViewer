@@ -8,14 +8,16 @@ import com.pawelszumanski.utils.DialogsUtils;
 import com.pawelszumanski.utils.FxmlUtils;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class MainController {
-
 
     @FXML
     private BorderPane mainWindow;
@@ -23,17 +25,30 @@ public class MainController {
     @FXML
     private TopMenuButtonsController topMenuButtonsController;
 
+    @FXML
+    private ProgressIndicator progressIndicator;
 
     @FXML
     private void initialize(){
+        progressIndicator.setVisible(false);
         topMenuButtonsController.setMainController(this);
     }
 
 
     public void setCenter(String fxmlPath){
-        DialogsUtils.operationInProgressShow();
-        mainWindow.setCenter(FxmlUtils.fxmlLoader(fxmlPath));
-        DialogsUtils.operationInProgressClose();
+        Task<Pane> task = new FxmlUtils();
+        ((FxmlUtils) task).setFxmlPath(fxmlPath);
+        mainWindow.setCenter(progressIndicator);
+        progressIndicator.setVisible(true);
+
+        task.setOnSucceeded(e -> {
+            progressIndicator.setVisible(false);
+            Pane pane = task.getValue();
+            mainWindow.setCenter(pane);
+        });
+        task.setOnFailed(e -> progressIndicator.setVisible(false));
+
+        new Thread(task).start();
     }
 
     @FXML
@@ -64,6 +79,5 @@ public class MainController {
     private void aboutAppOnAction() {
         DialogsUtils.dialogAboutApp();
     }
-
 
 }
