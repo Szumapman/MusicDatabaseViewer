@@ -31,7 +31,9 @@ public class MainController {
 
 
     public void setCenter(String fxmlPath){
+        DialogsUtils.operationInProgressShow();
         mainWindow.setCenter(FxmlUtils.fxmlLoader(fxmlPath));
+        DialogsUtils.operationInProgressClose();
     }
 
     @FXML
@@ -62,4 +64,6 @@ public class MainController {
     private void aboutAppOnAction() {
         DialogsUtils.dialogAboutApp();
     }
+
+
 }

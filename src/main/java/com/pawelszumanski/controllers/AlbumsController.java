@@ -51,6 +51,7 @@ public class AlbumsController {
     @FXML
     private Button deleteAlbumButton;
 
+
     private AlbumFxModel albumFxModel;
 
     @FXML
@@ -58,7 +59,6 @@ public class AlbumsController {
         this.albumFxModel = new AlbumFxModel();
         try {
             albumFxModel.init();
-
         } catch (ApplicationExceptions applicationExceptions) {
             DialogsUtils.errorDialog(applicationExceptions.getMessage());
         }

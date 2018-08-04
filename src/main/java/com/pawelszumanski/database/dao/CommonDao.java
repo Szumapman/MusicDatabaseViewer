@@ -96,6 +96,7 @@ public abstract class CommonDao {
     public <T extends BaseModel, I> List<T> queryForAll(Class<T> cls) throws ApplicationExceptions {
         Dao<T, I> dao = getDao(cls);
         try {
+
             return dao.queryForAll();
         } catch (SQLException e) {
             LOGGER.warn(e.getCause().getMessage());

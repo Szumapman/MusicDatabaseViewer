@@ -9,6 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -19,6 +20,8 @@ import static com.pawelszumanski.utils.PathUtils.ICONS_MUSIC_BASE_32_PNG;
 public class DialogsUtils {
 
     private static ResourceBundle resourceBundle = FxmlUtils.getResourceBundle();
+
+    private static Alert operationInProgress;
 
     public static void dialogAboutApp(){
         Alert aboutAppInformationAlert = new Alert(Alert.AlertType.INFORMATION);
@@ -73,5 +76,17 @@ public class DialogsUtils {
         deleteConfirmationAlert.setContentText(resourceBundle.getString("delete.context"));
         Optional<ButtonType> result = deleteConfirmationAlert.showAndWait();
         return result.get() == ButtonType.OK;
+    }
+
+    public static void operationInProgressShow(){
+        operationInProgress = new Alert(Alert.AlertType.INFORMATION);
+        operationInProgress.setTitle(resourceBundle.getString("operation.in.progress"));
+        operationInProgress.setHeaderText(resourceBundle.getString("operation.in.progress"));
+        operationInProgress.initModality(Modality.APPLICATION_MODAL);
+        operationInProgress.show();
+    }
+
+    public static void operationInProgressClose() {
+        operationInProgress.close();
     }
 }

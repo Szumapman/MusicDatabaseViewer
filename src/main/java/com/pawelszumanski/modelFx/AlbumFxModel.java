@@ -39,16 +39,25 @@ public class AlbumFxModel {
     private TreeItem<String> root = new TreeItem<>();
 
     public void init() throws ApplicationExceptions {
+        Long start = System.currentTimeMillis();
         initArtistsFxObservableList();
+        System.out.println("Time of creating list of artist from database: " + (System.currentTimeMillis() -  start));
         AlbumsDao albumsDao = new AlbumsDao();
+        start = System.currentTimeMillis();
         List<Albums> albums = albumsDao.queryForAll(Albums.class);
+        System.out.println("Time of creating list of albums from database: " + (System.currentTimeMillis() -  start));
+        start = System.currentTimeMillis();
         initAlbumsList(albums);
+        System.out.println("Time of initialization a list of albums from database: " + (System.currentTimeMillis() -  start));
+        start = System.currentTimeMillis();
         initRoot(albums);
+        System.out.println("Time of init root: " + (System.currentTimeMillis() -  start));
     }
 
     private void initArtistsFxObservableList() throws ApplicationExceptions {
         artistsFxObservableList.clear();
         ArtistsDao artistsDao = new ArtistsDao();
+
         List<Artists> artistsList = artistsDao.queryForAll(Artists.class);
         artistsList.forEach(artist -> {
             ArtistsFx artistsFx = ConvertArtist.convertToArtistFx(artist);
