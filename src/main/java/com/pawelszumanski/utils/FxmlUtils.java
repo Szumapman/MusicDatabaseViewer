@@ -4,19 +4,15 @@
 
 package com.pawelszumanski.utils;
 
-import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
 
-public class FxmlUtils extends Task {
+public class FxmlUtils {
 
     public static final String BUNDLES_MESSAGES = "bundles.messages";
-
-
-    private String fxmlPath;
 
     public static Pane fxmlLoader(String fxmlPath){
 
@@ -40,12 +36,4 @@ public class FxmlUtils extends Task {
         return ResourceBundle.getBundle(BUNDLES_MESSAGES);
     }
 
-    @Override
-    protected Pane call() throws Exception {
-        return fxmlLoader(fxmlPath);
-    }
-
-    public void setFxmlPath(String fxmlPath) {
-        this.fxmlPath = fxmlPath;
-    }
 }

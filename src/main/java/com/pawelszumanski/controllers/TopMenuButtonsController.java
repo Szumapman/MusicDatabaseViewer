@@ -21,6 +21,7 @@ public class TopMenuButtonsController {
 
     @FXML
     public void openAlbums( ) {
+
         mainController.setCenter(ALBUMS_FXML);
     }
 

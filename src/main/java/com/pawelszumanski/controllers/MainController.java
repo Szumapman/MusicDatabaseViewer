@@ -12,9 +12,11 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class MainController {
@@ -29,26 +31,45 @@ public class MainController {
     private ProgressIndicator progressIndicator;
 
     @FXML
+    private VBox centerVBox;
+
+    @FXML
+    private Label waitLabel;
+
+    @FXML
     private void initialize(){
         progressIndicator.setVisible(false);
+        waitLabel.setVisible(false);
         topMenuButtonsController.setMainController(this);
     }
 
+    private String actualCenterFxmlPath = null;
 
     public void setCenter(String fxmlPath){
-        Task<Pane> task = new FxmlUtils();
-        ((FxmlUtils) task).setFxmlPath(fxmlPath);
-        mainWindow.setCenter(progressIndicator);
-        progressIndicator.setVisible(true);
+        if(!fxmlPath.equals(actualCenterFxmlPath)){
+            actualCenterFxmlPath = fxmlPath;
+            Task<Pane> task = new Task<Pane>() {
+                @Override
+                protected Pane call() throws Exception {
+                    return FxmlUtils.fxmlLoader(fxmlPath);
+                }
+            };
+            mainWindow.setCenter(centerVBox);
+            progressIndicator.setVisible(true);
+            waitLabel.setVisible(true);
+            task.setOnSucceeded(e -> {
+                progressIndicator.setVisible(false);
+                waitLabel.setVisible(false);
+                Pane pane = task.getValue();
+                mainWindow.setCenter(pane);
+            });
+            task.setOnFailed(e -> {
+                progressIndicator.setVisible(false);
+                waitLabel.setVisible(false);
+            });
 
-        task.setOnSucceeded(e -> {
-            progressIndicator.setVisible(false);
-            Pane pane = task.getValue();
-            mainWindow.setCenter(pane);
-        });
-        task.setOnFailed(e -> progressIndicator.setVisible(false));
-
-        new Thread(task).start();
+            new Thread(task).start();
+        }
     }
 
     @FXML
