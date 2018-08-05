@@ -55,7 +55,7 @@ public class AlbumsController {
     private AlbumFxModel albumFxModel;
 
     @FXML
-    public void initialize(){
+    public void initialize() {
         this.albumFxModel = new AlbumFxModel();
         try {
             albumFxModel.init();
@@ -98,7 +98,7 @@ public class AlbumsController {
     }
 
     @FXML
-    private void editAlbumOnAction(ActionEvent actionEvent) {
+    private void editAlbumOnAction() {
         FXMLLoader loader = FxmlUtils.getLoader(EDIT_ALBUM_FXML);
         Scene scene = null;
         try {
@@ -107,6 +107,9 @@ public class AlbumsController {
             DialogsUtils.errorDialog(e.getMessage());
             e.printStackTrace();
         }
+        Stage stage = new Stage();
+        stage.setScene(scene);
+
         EditAlbumController editAlbumController = loader.getController();
         editAlbumController.getAlbumFxModel().setAlbumsFxObjectProperty(this.albumFxModel.getAlbumsFxObjectProperty());
         try {
@@ -115,8 +118,6 @@ public class AlbumsController {
             DialogsUtils.errorDialog(applicationExceptions.getMessage());
         }
         editAlbumController.binding();
-        Stage stage = new Stage();
-        stage.setScene(scene);
         stage.setIconified(false);
         stage.setResizable(false);
         Button saveButtonEditAlbumController = editAlbumController.getSaveButton();
@@ -138,6 +139,7 @@ public class AlbumsController {
             stage.close();
         });
         stage.initModality(Modality.APPLICATION_MODAL);
+
         stage.showAndWait();
     }
 
@@ -145,7 +147,7 @@ public class AlbumsController {
     private void deleteAlbumOnAction(ActionEvent actionEvent) {
         String albumToDelete = this.albumFxModel.getAlbumsFxObjectProperty().getName();
         boolean deleteAlbum = DialogsUtils.deleteConfirmationDialog(albumToDelete);
-        if(deleteAlbum){
+        if (deleteAlbum) {
             try {
                 this.albumFxModel.deleteAlbumById();
             } catch (ApplicationExceptions applicationExceptions) {
@@ -156,10 +158,10 @@ public class AlbumsController {
 
     @FXML
     private void unknownArtistOnAction(ActionEvent actionEvent) {
-        if(((CheckBox)actionEvent.getSource()).isSelected()){
+        if (((CheckBox) actionEvent.getSource()).isSelected()) {
             ArtistsFx artistsFx = null;
-            for(ArtistsFx artistFXFromList : this.albumFxModel.getArtistsFxObservableList()){
-                if(artistFXFromList != null && artistFXFromList.getName().equals(resourceBundle.getString("unknown.artists"))){
+            for (ArtistsFx artistFXFromList : this.albumFxModel.getArtistsFxObservableList()) {
+                if (artistFXFromList != null && artistFXFromList.getName().equals(resourceBundle.getString("unknown.artists"))) {
                     artistsFx = artistFXFromList;
                     break;
                 }

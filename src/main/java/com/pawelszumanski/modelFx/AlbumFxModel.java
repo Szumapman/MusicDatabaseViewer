@@ -39,19 +39,11 @@ public class AlbumFxModel {
     private TreeItem<String> root = new TreeItem<>();
 
     public void init() throws ApplicationExceptions {
-        Long start = System.currentTimeMillis();
         initArtistsFxObservableList();
-        System.out.println("Time of creating list of artist from database: " + (System.currentTimeMillis() -  start));
         AlbumsDao albumsDao = new AlbumsDao();
-        start = System.currentTimeMillis();
         List<Albums> albums = albumsDao.queryForAll(Albums.class);
-        System.out.println("Time of creating list of albums from database: " + (System.currentTimeMillis() -  start));
-        start = System.currentTimeMillis();
         initAlbumsList(albums);
-        System.out.println("Time of initialization a list of albums from database: " + (System.currentTimeMillis() -  start));
-        start = System.currentTimeMillis();
         initRoot(albums);
-        System.out.println("Time of init root: " + (System.currentTimeMillis() -  start));
     }
 
     private void initArtistsFxObservableList() throws ApplicationExceptions {
@@ -71,16 +63,12 @@ public class AlbumFxModel {
         SongsDao songsDao = new SongsDao();
         List<Songs> songsList = songsDao.queryForAll(Songs.class);
         songsList.forEach(song -> {
-
             if(song.getAlbum().get_id() == albumsFxObjectProperty.get().getId()){
                 SongsFx songsFx = ConvertSong.convertToSongsFx(song);
                 songsFxObservableList.add(songsFx);
-                System.out.println(songsFx);
             }
-
             songsFxObservableList.sort((songsFx1, songsFx2) -> songsFx1.getTrack() -  songsFx2.getTrack());
         });
-
     }
 
     public void saveAlbumInDataBase(String name) throws ApplicationExceptions {
@@ -132,10 +120,7 @@ public class AlbumFxModel {
         this.albumsList.clear();
         albums.forEach(a->{
             AlbumsFx albumsFx = ConvertAlbum.convertToAlbumFx(a);
-//            if(!albumsFx.getName().equals(resourceBundle.getString("unknown.album"))){
                 albumsList.add(albumsFx);
-//            }
-//            System.out.println(albumsFx.getArtistFx() + " " +albumsFx.getArtistFx().getId());
         });
     }
 
@@ -186,3 +171,5 @@ public class AlbumFxModel {
 
 
 }
+
+

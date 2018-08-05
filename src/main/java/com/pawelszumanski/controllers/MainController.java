@@ -50,13 +50,15 @@ public class MainController {
             actualCenterFxmlPath = fxmlPath;
             Task<Pane> task = new Task<Pane>() {
                 @Override
-                protected Pane call() throws Exception {
+                protected Pane call() {
                     return FxmlUtils.fxmlLoader(fxmlPath);
                 }
             };
+
             mainWindow.setCenter(centerVBox);
             progressIndicator.setVisible(true);
             waitLabel.setVisible(true);
+
             task.setOnSucceeded(e -> {
                 progressIndicator.setVisible(false);
                 waitLabel.setVisible(false);
@@ -84,7 +86,7 @@ public class MainController {
         Application.setUserAgentStylesheet(Application.STYLESHEET_CASPIAN);
     }
     @FXML
-    private void setModenaStyleOnAction(ActionEvent actionEvent) {
+    private void setModenaStyleOnAction() {
         Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
     }
     @FXML
