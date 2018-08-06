@@ -22,6 +22,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -67,14 +68,14 @@ public class AlbumFxModel {
                 SongsFx songsFx = ConvertSong.convertToSongsFx(song);
                 songsFxObservableList.add(songsFx);
             }
-            songsFxObservableList.sort((songsFx1, songsFx2) -> songsFx1.getTrack() -  songsFx2.getTrack());
+            songsFxObservableList.sort(Comparator.comparingInt(SongsFx::getTrack));
         });
     }
 
-    public void saveAlbumInDataBase(String name) throws ApplicationExceptions {
+    public void saveAlbumInDataBase(String name, int artistId) throws ApplicationExceptions {
         AlbumsDao albumsDao = new AlbumsDao();
         ArtistsDao artistsDao = new ArtistsDao();
-        Artists artist = artistsDao.findByID(Artists.class, this.getAlbumsFxObjectProperty().getArtistFx().getId());
+        Artists artist = artistsDao.findByID(Artists.class, artistId);
         Albums album = new Albums();
         album.setName(name);
         album.setArtist(artist);

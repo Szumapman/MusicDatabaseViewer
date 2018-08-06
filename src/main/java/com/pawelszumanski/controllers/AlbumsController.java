@@ -6,6 +6,7 @@ package com.pawelszumanski.controllers;
 
 import com.pawelszumanski.modelFx.AlbumFxModel;
 import com.pawelszumanski.modelFx.AlbumsFx;
+import com.pawelszumanski.modelFx.ArtistFxModel;
 import com.pawelszumanski.modelFx.ArtistsFx;
 import com.pawelszumanski.utils.DialogsUtils;
 import com.pawelszumanski.utils.FxmlUtils;
@@ -51,18 +52,26 @@ public class AlbumsController {
     @FXML
     private Button deleteAlbumButton;
 
+    @FXML
+    private ProgressBar progressBar;
+
 
     private AlbumFxModel albumFxModel;
+    private ArtistFxModel artistFxModel;
 
     @FXML
     public void initialize() {
+        progressBar.setVisible(false);
         this.albumFxModel = new AlbumFxModel();
+        this.artistFxModel = new ArtistFxModel();
         try {
             albumFxModel.init();
+            artistFxModel.init();
         } catch (ApplicationExceptions applicationExceptions) {
             DialogsUtils.errorDialog(applicationExceptions.getMessage());
         }
         bindings();
+
         this.albumComboBoxOnAction();
     }
 
@@ -70,25 +79,26 @@ public class AlbumsController {
         this.albumsTreeView.setRoot(this.albumFxModel.getRoot());
         this.albumComboBox.setItems(this.albumFxModel.getAlbumsList());
         this.artistComboBox.setItems(this.albumFxModel.getArtistsFxObservableList());
-        this.saveAlbumButton.disableProperty().bind(this.albumFxModel.getAlbumsFxObjectProperty().artistFxProperty().isNull().or(this.albumsTextField.textProperty().isEmpty()));
+        this.saveAlbumButton.disableProperty().bind(this.albumsTextField.textProperty().isEmpty().or(this.artistFxModel.artistsFxObjectPropertyProperty().isNull()));
         this.editAlbumButton.disableProperty().bind(this.albumFxModel.albumsFxObjectPropertyProperty().isNull());
         this.deleteAlbumButton.disableProperty().bind(this.albumFxModel.albumsFxObjectPropertyProperty().isNull());
     }
 
     @FXML
     private void artistComboBoxOnAction() {
-        this.albumFxModel.getAlbumsFxObjectProperty().setArtistFx(this.artistComboBox.getSelectionModel().getSelectedItem());
-
+        this.artistFxModel.setArtistsFxObjectProperty(this.artistComboBox.getSelectionModel().getSelectedItem());
     }
 
     @FXML
     private void saveAlbumOnAction() {
+        progressBar.setVisible(true);
         try {
-            this.albumFxModel.saveAlbumInDataBase(albumsTextField.getText());
+            this.albumFxModel.saveAlbumInDataBase(albumsTextField.getText(), this.artistFxModel.getArtistsFxObjectProperty().getId());
         } catch (ApplicationExceptions applicationExceptions) {
             DialogsUtils.errorDialog(applicationExceptions.getMessage());
         }
         albumsTextField.clear();
+        progressBar.setVisible(false);
 
     }
 
@@ -99,6 +109,7 @@ public class AlbumsController {
 
     @FXML
     private void editAlbumOnAction() {
+        progressBar.setVisible(true);
         FXMLLoader loader = FxmlUtils.getLoader(EDIT_ALBUM_FXML);
         Scene scene = null;
         try {
@@ -138,8 +149,8 @@ public class AlbumsController {
         cancelButtonEditAlbumController.setOnAction(e -> {
             stage.close();
         });
+        progressBar.setVisible(false);
         stage.initModality(Modality.APPLICATION_MODAL);
-
         stage.showAndWait();
     }
 
@@ -163,6 +174,7 @@ public class AlbumsController {
             for (ArtistsFx artistFXFromList : this.albumFxModel.getArtistsFxObservableList()) {
                 if (artistFXFromList != null && artistFXFromList.getName().equals(resourceBundle.getString("unknown.artists"))) {
                     artistsFx = artistFXFromList;
+
                     break;
                 }
             }
