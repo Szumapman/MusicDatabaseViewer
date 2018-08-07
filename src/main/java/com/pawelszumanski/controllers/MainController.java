@@ -45,7 +45,7 @@ public class MainController {
 
     private String actualCenterFxmlPath = null;
 
-    public void setCenter(String fxmlPath){
+    void setCenter(String fxmlPath){
         if(!fxmlPath.equals(actualCenterFxmlPath)){
             actualCenterFxmlPath = fxmlPath;
             Task<Pane> task = new Task<Pane>() {

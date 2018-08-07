@@ -11,7 +11,6 @@ import com.pawelszumanski.utils.DialogsUtils;
 import com.pawelszumanski.utils.exceptions.ApplicationExceptions;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -77,7 +76,7 @@ public class EditAlbumController {
         });
     }
 
-    public void binding() {
+    private void binding() {
         this.artistsComboBox.setItems(this.albumFxModel.getArtistsFxObservableList());
         this.albumTitleTextField.textProperty().bindBidirectional(this.albumFxModel.getAlbumsFxObjectProperty().nameProperty());
         this.artistsComboBox.valueProperty().bindBidirectional(this.albumFxModel.getAlbumsFxObjectProperty().artistFxProperty());
@@ -93,7 +92,7 @@ public class EditAlbumController {
     }
 
     @FXML
-    private void saveButtonOnAction(ActionEvent actionEvent) {
+    private void saveButtonOnAction() {
         final AlbumFxModel taskAlbumFxModel = this.albumFxModel;
         Task<AlbumFxModel> updateAlbumTask = new Task<AlbumFxModel>() {
 
@@ -109,9 +108,7 @@ public class EditAlbumController {
             }
         };
 
-        updateAlbumTask.setOnSucceeded(e -> {
-            stage.close();
-        });
+        updateAlbumTask.setOnSucceeded(e -> stage.close());
         executor.execute(updateAlbumTask);
     }
 
@@ -120,26 +117,22 @@ public class EditAlbumController {
         stage.close();
     }
 
-    protected AlbumFxModel getAlbumFxModel() {
-        return albumFxModel;
-    }
-
-    protected void setAlbumFxModel(AlbumFxModel albumFxModel) {
+    void setAlbumFxModel(AlbumFxModel albumFxModel) {
         this.albumFxModel = albumFxModel;
     }
 
-    protected Stage getStage() {
+    Stage getStage() {
         return stage;
     }
-    protected void setStage(Stage stage) {
+    void setStage(Stage stage) {
         this.stage = stage;
     }
 
-    protected void setAlbumsController(AlbumsController albumsController) {
+    void setAlbumsController(AlbumsController albumsController) {
         this.albumsController = albumsController;
     }
 
-    protected void initSongsListAndBinding() {
+    void initSongsListAndBinding() {
         final AlbumFxModel taskAlbumFxModel = this.albumFxModel;
         Task<AlbumFxModel> initSongsListTask = new Task<AlbumFxModel>() {
             @Override

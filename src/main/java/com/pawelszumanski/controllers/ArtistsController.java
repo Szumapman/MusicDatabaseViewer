@@ -86,11 +86,12 @@ public class ArtistsController {
     private void saveArtistOnAction() {
         createAndShowWaitWindow();
         final ArtistFxModel taskArtistFxModel = this.artistFxModel;
+        final String newArtistName = artistTextField.getText();
         Task<ArtistFxModel> saveArtistTask = new Task<ArtistFxModel>() {
             @Override
             protected ArtistFxModel call() {
                 try {
-                    taskArtistFxModel.saveArtistInDataBase(artistTextField.getText());
+                    taskArtistFxModel.saveArtistInDataBase(newArtistName);
                 } catch (ApplicationExceptions applicationExceptions) {
                     DialogsUtils.errorDialog(applicationExceptions.getMessage());
                 }

@@ -15,27 +15,24 @@ public class TopMenuButtonsController {
     private MainController mainController;
 
     @FXML
-    public void openSongs( ) {
+    private void openSongs( ) {
         mainController.setCenter(SONGS_FXML);
     }
 
     @FXML
-    public void openAlbums( ) {
+    private void openAlbums( ) {
 
         mainController.setCenter(ALBUMS_FXML);
     }
 
     @FXML
-    public void openArtists( ) {
+    private void openArtists( ) {
 
         mainController.setCenter(ARTISTS_FXML);
     }
 
-    public void setMainController(MainController mainController) {
+    void setMainController(MainController mainController) {
         this.mainController = mainController;
     }
 
-    public MainController getMainController() {
-        return mainController;
-    }
 }

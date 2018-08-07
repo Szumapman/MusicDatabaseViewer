@@ -122,9 +122,7 @@ public class AlbumsController {
                 return null;
             }
         };
-        saveAlbumTask.setOnSucceeded(e -> {
-            reinitFxModels();
-        });
+        saveAlbumTask.setOnSucceeded(e -> reinitFxModels());
         executor.execute(saveAlbumTask);
     }
 
@@ -160,7 +158,7 @@ public class AlbumsController {
     }
 
     @FXML
-    private void deleteAlbumOnAction(ActionEvent actionEvent) {
+    private void deleteAlbumOnAction() {
         String albumToDelete = this.albumFxModel.getAlbumsFxObjectProperty().getName();
         boolean deleteAlbum = DialogsUtils.deleteConfirmationDialog(albumToDelete);
         if (deleteAlbum) {
@@ -178,9 +176,7 @@ public class AlbumsController {
                     return taskAlbumFxModel;
                 }
             };
-            deleteAlbumTask.setOnSucceeded(e -> {
-                reinitFxModels();
-            });
+            deleteAlbumTask.setOnSucceeded(e -> reinitFxModels());
             executor.execute(deleteAlbumTask);
         }
     }
@@ -206,7 +202,7 @@ public class AlbumsController {
         }
     }
 
-    protected void reinitFxModels() {
+    void reinitFxModels() {
         progressIndicator.setVisible(true);
         waitLabel.setVisible(true);
         Task<AlbumFxModel> createAlbumFxmodelTask = new AlbumFxModelTask();
