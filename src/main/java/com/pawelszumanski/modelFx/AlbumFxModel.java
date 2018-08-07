@@ -39,6 +39,8 @@ public class AlbumFxModel {
     private ObjectProperty<AlbumsFx> albumsFxObjectProperty = new SimpleObjectProperty<>(new AlbumsFx());
     private TreeItem<String> root = new TreeItem<>();
 
+    private boolean taskInProgress;
+
     public void init() throws ApplicationExceptions {
         initArtistsFxObservableList();
         AlbumsDao albumsDao = new AlbumsDao();
@@ -80,7 +82,7 @@ public class AlbumFxModel {
         album.setName(name);
         album.setArtist(artist);
         albumsDao.createOrUpdate(album);
-        init();
+//        init();
     }
 
     public void updateAlbumInDataBase() throws ApplicationExceptions {
@@ -91,17 +93,19 @@ public class AlbumFxModel {
         Artists tempArtist = artistsDao.findByID(Artists.class, getAlbumsFxObjectProperty().getArtistFx().getId());
         tempAlbum.setArtist(tempArtist);
         albumsDao.createOrUpdate(tempAlbum);
-        init();
+//        init();
     }
 
     public void deleteAlbumById() throws ApplicationExceptions {
+
         AlbumsDao albumsDao = new AlbumsDao();
         albumsDao.deleteById(Albums.class, this.getAlbumsFxObjectProperty().getId());
         /*
         Uzupełnić usuwanie piosenek.
          */
-        init();
+//        init();
     }
+
 
     private void initRoot(List<Albums> albums) {
         this.root.getChildren().clear();
@@ -124,6 +128,7 @@ public class AlbumFxModel {
                 albumsList.add(albumsFx);
         });
     }
+
 
 
     public ObservableList<AlbumsFx> getAlbumsList() {
@@ -169,6 +174,7 @@ public class AlbumFxModel {
     public void setRoot(TreeItem<String> root) {
         this.root = root;
     }
+
 
 
 }

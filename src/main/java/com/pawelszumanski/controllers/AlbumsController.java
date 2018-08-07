@@ -11,6 +11,9 @@ import com.pawelszumanski.modelFx.ArtistsFx;
 import com.pawelszumanski.utils.DialogsUtils;
 import com.pawelszumanski.utils.FxmlUtils;
 import com.pawelszumanski.utils.exceptions.ApplicationExceptions;
+import com.pawelszumanski.utils.tasks.AlbumFxModelTask;
+import com.pawelszumanski.utils.tasks.ArtistFxModelTask;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +24,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static com.pawelszumanski.utils.PathUtils.EDIT_ALBUM_FXML;
 
@@ -53,15 +58,19 @@ public class AlbumsController {
     private Button deleteAlbumButton;
 
     @FXML
-    private ProgressBar progressBar;
+    private ProgressIndicator progressIndicator;
 
+    @FXML
+    private Label waitLabel;
 
+    private Executor executor;
     private AlbumFxModel albumFxModel;
     private ArtistFxModel artistFxModel;
 
     @FXML
     public void initialize() {
-        progressBar.setVisible(false);
+        progressIndicator.setVisible(false);
+        waitLabel.setVisible(false);
         this.albumFxModel = new AlbumFxModel();
         this.artistFxModel = new ArtistFxModel();
         try {
@@ -71,8 +80,14 @@ public class AlbumsController {
             DialogsUtils.errorDialog(applicationExceptions.getMessage());
         }
         bindings();
-
         this.albumComboBoxOnAction();
+
+        executor = Executors.newCachedThreadPool(runnable -> {
+            Thread thread = new Thread(runnable);
+            thread.setDaemon(true);
+            return thread;
+        });
+
     }
 
     private void bindings() {
@@ -84,6 +99,7 @@ public class AlbumsController {
         this.deleteAlbumButton.disableProperty().bind(this.albumFxModel.albumsFxObjectPropertyProperty().isNull());
     }
 
+
     @FXML
     private void artistComboBoxOnAction() {
         this.artistFxModel.setArtistsFxObjectProperty(this.artistComboBox.getSelectionModel().getSelectedItem());
@@ -91,16 +107,28 @@ public class AlbumsController {
 
     @FXML
     private void saveAlbumOnAction() {
-        progressBar.setVisible(true);
-        try {
-            this.albumFxModel.saveAlbumInDataBase(albumsTextField.getText(), this.artistFxModel.getArtistsFxObjectProperty().getId());
-        } catch (ApplicationExceptions applicationExceptions) {
-            DialogsUtils.errorDialog(applicationExceptions.getMessage());
-        }
-        albumsTextField.clear();
-        progressBar.setVisible(false);
-
+        progressIndicator.setVisible(true);
+        waitLabel.setVisible(true);
+        final AlbumFxModel taskAlbumFxModel = this.albumFxModel;
+        final ArtistFxModel taskArtistFxModel = this.artistFxModel;
+        Task<Void> saveAlbumTask = new Task<Void>() {
+            @Override
+            protected Void call() {
+                try {
+                    taskAlbumFxModel.saveAlbumInDataBase(albumsTextField.getText(), taskArtistFxModel.getArtistsFxObjectProperty().getId());
+                } catch (ApplicationExceptions applicationExceptions) {
+                    DialogsUtils.errorDialog(applicationExceptions.getMessage());
+                }
+                return null;
+            }
+        };
+        saveAlbumTask.setOnSucceeded(e -> {
+            reinitFxModels();
+        });
+        executor.execute(saveAlbumTask);
     }
+
+
 
     @FXML
     private void albumComboBoxOnAction() {
@@ -109,49 +137,26 @@ public class AlbumsController {
 
     @FXML
     private void editAlbumOnAction() {
-        progressBar.setVisible(true);
+
         FXMLLoader loader = FxmlUtils.getLoader(EDIT_ALBUM_FXML);
         Scene scene = null;
         try {
             scene = new Scene(loader.load());
         } catch (IOException e) {
             DialogsUtils.errorDialog(e.getMessage());
-            e.printStackTrace();
         }
         Stage stage = new Stage();
-        stage.setScene(scene);
-
-        EditAlbumController editAlbumController = loader.getController();
-        editAlbumController.getAlbumFxModel().setAlbumsFxObjectProperty(this.albumFxModel.getAlbumsFxObjectProperty());
-        try {
-            editAlbumController.getAlbumFxModel().initSongsFxObservableList();
-        } catch (ApplicationExceptions applicationExceptions) {
-            DialogsUtils.errorDialog(applicationExceptions.getMessage());
-        }
-        editAlbumController.binding();
         stage.setIconified(false);
         stage.setResizable(false);
-        Button saveButtonEditAlbumController = editAlbumController.getSaveButton();
-        saveButtonEditAlbumController.setOnAction(e -> {
-            try {
-                editAlbumController.getAlbumFxModel().updateAlbumInDataBase();
-            } catch (ApplicationExceptions applicationExceptions) {
-                DialogsUtils.errorDialog(applicationExceptions.getMessage());
-            }
-            try {
-                albumFxModel.init();
-            } catch (ApplicationExceptions applicationExceptions) {
-                applicationExceptions.printStackTrace();
-            }
-            stage.close();
-        });
-        Button cancelButtonEditAlbumController = editAlbumController.getCancelButton();
-        cancelButtonEditAlbumController.setOnAction(e -> {
-            stage.close();
-        });
-        progressBar.setVisible(false);
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.showAndWait();
+        stage.setScene(scene);
+        EditAlbumController editAlbumController = loader.getController();
+        editAlbumController.setStage(stage);
+        editAlbumController.getStage().show();
+        editAlbumController.setAlbumsController(this);
+        editAlbumController.setAlbumFxModel(this.albumFxModel);
+        editAlbumController.initSongsListAndBinding();
+        editAlbumController.getStage().showAndWait();
     }
 
     @FXML
@@ -159,11 +164,24 @@ public class AlbumsController {
         String albumToDelete = this.albumFxModel.getAlbumsFxObjectProperty().getName();
         boolean deleteAlbum = DialogsUtils.deleteConfirmationDialog(albumToDelete);
         if (deleteAlbum) {
-            try {
-                this.albumFxModel.deleteAlbumById();
-            } catch (ApplicationExceptions applicationExceptions) {
-                DialogsUtils.errorDialog(applicationExceptions.getMessage());
-            }
+            progressIndicator.setVisible(true);
+            waitLabel.setVisible(true);
+            final AlbumFxModel taskAlbumFxModel = this.albumFxModel;
+            Task<AlbumFxModel> deleteAlbumTask  = new Task<AlbumFxModel>() {
+                @Override
+                protected AlbumFxModel call() {
+                    try {
+                        taskAlbumFxModel.deleteAlbumById();
+                    } catch (ApplicationExceptions applicationExceptions) {
+                        DialogsUtils.errorDialog(applicationExceptions.getMessage());
+                    }
+                    return taskAlbumFxModel;
+                }
+            };
+            deleteAlbumTask.setOnSucceeded(e -> {
+                reinitFxModels();
+            });
+            executor.execute(deleteAlbumTask);
         }
     }
 
@@ -179,6 +197,7 @@ public class AlbumsController {
                 }
             }
             this.artistComboBox.setValue(artistsFx);
+            this.artistComboBoxOnAction();
             this.artistComboBox.setDisable(true);
 
         } else {
@@ -187,8 +206,24 @@ public class AlbumsController {
         }
     }
 
-    protected AlbumFxModel getAlbumFxModel() {
-        return albumFxModel;
+    protected void reinitFxModels() {
+        progressIndicator.setVisible(true);
+        waitLabel.setVisible(true);
+        Task<AlbumFxModel> createAlbumFxmodelTask = new AlbumFxModelTask();
+        createAlbumFxmodelTask.setOnSucceeded(e -> {
+            this.albumFxModel = createAlbumFxmodelTask.getValue();
+            Task<ArtistFxModel> createArtistFxModelTask = new ArtistFxModelTask();
+            createArtistFxModelTask.setOnSucceeded(e1 -> {
+                this.artistFxModel = createArtistFxModelTask.getValue();
+                this.albumsTextField.clear();
+                this.unKnownArtistCheckBox.setSelected(false);
+                bindings();
+                progressIndicator.setVisible(false);
+                waitLabel.setVisible(false);
+            });
+            executor.execute(createArtistFxModelTask);
+        });
+        executor.execute(createAlbumFxmodelTask);
     }
 
 

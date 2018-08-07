@@ -55,7 +55,7 @@
       </VBox>
    </top>
    <center>
-      <VBox fx:id="centerVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox fx:id="centerVBox" alignment="CENTER" maxHeight="1.7976931348623157E308" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
             <ProgressIndicator fx:id="progressIndicator" prefHeight="200.0" prefWidth="1200.0">
                <VBox.margin>

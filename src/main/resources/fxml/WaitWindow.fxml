@@ -9,17 +9,12 @@
   ~ Created by Paweł Szumański
   -->
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pawelszumanski.controllers.WaitWindowControler">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pawelszumanski.controllers.WaitWindowController">
    <children>
-      <ProgressBar fx:id="progressBar" prefWidth="200.0">
-         <VBox.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </VBox.margin>
-      </ProgressBar>
-      <Label text="%please.wait">
-         <VBox.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </VBox.margin>
-      </Label>
+      <ProgressBar fx:id="progressBar" prefWidth="200.0" />
+      <Label text="%please.wait" />
    </children>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
 </VBox>

@@ -26,14 +26,14 @@ public class ArtistFxModel {
 
     private static ResourceBundle resourceBundle = FxmlUtils.getResourceBundle();
 
-    private ObservableList<ArtistsFx> artistsList = FXCollections.observableArrayList();
+    private ObservableList<ArtistsFx> artistsFxObservableList = FXCollections.observableArrayList();
     private ObjectProperty<ArtistsFx> artistsFxObjectProperty = new SimpleObjectProperty<>();
     private TreeItem<String> root = new TreeItem<>();
 
     public void init() throws ApplicationExceptions {
         ArtistsDao artistsDao = new ArtistsDao();
         List<Artists> artists = artistsDao.queryForAll(Artists.class);
-        initArtistList(artists);
+        initArtistsFxObservableList(artists);
         initRoot(artists);
     }
 
@@ -42,7 +42,7 @@ public class ArtistFxModel {
         Artists arist = new Artists();
         arist.setName(name);
         artistsDao.createOrUpdate(arist);
-        init();
+//        init();
     }
 
     public void updateArtistInDataBase() throws ApplicationExceptions {
@@ -50,7 +50,7 @@ public class ArtistFxModel {
         Artists tempArtist = artistsDao.findByID(Artists.class, getArtistsFxObjectProperty().getId());
         tempArtist.setName(getArtistsFxObjectProperty().getName());
         artistsDao.createOrUpdate(tempArtist);
-        init();
+//        init();
     }
 
 
@@ -60,7 +60,7 @@ public class ArtistFxModel {
         /*
         Uzupełnić usuwanie albumów i dalej piosenek.
          */
-        this.init();
+//        this.init();
     }
 
     public void setUnknownArtist() throws ApplicationExceptions {
@@ -97,22 +97,22 @@ public class ArtistFxModel {
         });
     }
 
-    private void initArtistList(List<Artists> artists) {
-        this.artistsList.clear();
+    private void initArtistsFxObservableList(List<Artists> artists) {
+        this.artistsFxObservableList.clear();
         artists.forEach(a -> {
             ArtistsFx artistsFx = ConvertArtist.convertToArtistFx(a);
             if(!artistsFx.getName().equals(resourceBundle.getString("unknown.artists"))){
-                artistsList.add(artistsFx);
+                artistsFxObservableList.add(artistsFx);
             }
         });
     }
 
-    public ObservableList<ArtistsFx> getArtistsList() {
-        return artistsList;
+    public ObservableList<ArtistsFx> getArtistsFxObservableList() {
+        return artistsFxObservableList;
     }
 
-    public void setArtistsList(ObservableList<ArtistsFx> artistsList) {
-        this.artistsList = artistsList;
+    public void setArtistsFxObservableList(ObservableList<ArtistsFx> artistsFxObservableList) {
+        this.artistsFxObservableList = artistsFxObservableList;
     }
 
     public ArtistsFx getArtistsFxObjectProperty() {
