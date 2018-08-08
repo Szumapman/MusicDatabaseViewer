@@ -12,7 +12,7 @@
 
 <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pawelszumanski.controllers.SongsController">
    <center>
-      <TableView fx:id="songsTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="550.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="songsTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="songColunm" prefWidth="75.0" text="%title.song" />
           <TableColumn fx:id="albumColumn" prefWidth="75.0" text="%album.song" />
