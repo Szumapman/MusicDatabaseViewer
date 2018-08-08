@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 
 import static com.pawelszumanski.utils.PathUtils.EDIT_ALBUM_FXML;
 
-public class AlbumsController {
+public class AlbumsController extends SuperWaitWindow{
 
     private static ResourceBundle resourceBundle = FxmlUtils.getResourceBundle();
 
@@ -57,11 +57,7 @@ public class AlbumsController {
     @FXML
     private Button deleteAlbumButton;
 
-    @FXML
-    private ProgressIndicator progressIndicator;
 
-    @FXML
-    private Label waitLabel;
 
     private Executor executor;
     private AlbumFxModel albumFxModel;
@@ -69,8 +65,6 @@ public class AlbumsController {
 
     @FXML
     public void initialize() {
-        progressIndicator.setVisible(false);
-        waitLabel.setVisible(false);
         this.albumFxModel = new AlbumFxModel();
         this.artistFxModel = new ArtistFxModel();
         try {
@@ -80,7 +74,6 @@ public class AlbumsController {
             DialogsUtils.errorDialog(applicationExceptions.getMessage());
         }
         bindings();
-        this.albumComboBoxOnAction();
 
         executor = Executors.newCachedThreadPool(runnable -> {
             Thread thread = new Thread(runnable);
@@ -95,8 +88,8 @@ public class AlbumsController {
         this.albumComboBox.setItems(this.albumFxModel.getAlbumsList());
         this.artistComboBox.setItems(this.albumFxModel.getArtistsFxObservableList());
         this.saveAlbumButton.disableProperty().bind(this.albumsTextField.textProperty().isEmpty().or(this.artistFxModel.artistsFxObjectPropertyProperty().isNull()));
-        this.editAlbumButton.disableProperty().bind(this.albumFxModel.albumsFxObjectPropertyProperty().isNull());
-        this.deleteAlbumButton.disableProperty().bind(this.albumFxModel.albumsFxObjectPropertyProperty().isNull());
+        this.editAlbumButton.disableProperty().bind(this.albumFxModel.albumsFxProperty().isNull());
+        this.deleteAlbumButton.disableProperty().bind(this.albumFxModel.albumsFxProperty().isNull());
     }
 
 
@@ -107,8 +100,7 @@ public class AlbumsController {
 
     @FXML
     private void saveAlbumOnAction() {
-        progressIndicator.setVisible(true);
-        waitLabel.setVisible(true);
+        showWaitWindow();
         final AlbumFxModel taskAlbumFxModel = this.albumFxModel;
         final ArtistFxModel taskArtistFxModel = this.artistFxModel;
         Task<Void> saveAlbumTask = new Task<Void>() {
@@ -126,11 +118,9 @@ public class AlbumsController {
         executor.execute(saveAlbumTask);
     }
 
-
-
     @FXML
     private void albumComboBoxOnAction() {
-        this.albumFxModel.setAlbumsFxObjectProperty(this.albumComboBox.getSelectionModel().getSelectedItem());
+        this.albumFxModel.setAlbumsFx(this.albumComboBox.getSelectionModel().getSelectedItem());
     }
 
     @FXML
@@ -159,11 +149,10 @@ public class AlbumsController {
 
     @FXML
     private void deleteAlbumOnAction() {
-        String albumToDelete = this.albumFxModel.getAlbumsFxObjectProperty().getName();
+        String albumToDelete = this.albumFxModel.getAlbumsFx().getName();
         boolean deleteAlbum = DialogsUtils.deleteConfirmationDialog(albumToDelete);
         if (deleteAlbum) {
-            progressIndicator.setVisible(true);
-            waitLabel.setVisible(true);
+            showWaitWindow();
             final AlbumFxModel taskAlbumFxModel = this.albumFxModel;
             Task<AlbumFxModel> deleteAlbumTask  = new Task<AlbumFxModel>() {
                 @Override
@@ -188,39 +177,37 @@ public class AlbumsController {
             for (ArtistsFx artistFXFromList : this.albumFxModel.getArtistsFxObservableList()) {
                 if (artistFXFromList != null && artistFXFromList.getName().equals(resourceBundle.getString("unknown.artists"))) {
                     artistsFx = artistFXFromList;
-
                     break;
                 }
             }
             this.artistComboBox.setValue(artistsFx);
-            this.artistComboBoxOnAction();
             this.artistComboBox.setDisable(true);
 
         } else {
             this.artistComboBox.setDisable(false);
-
         }
     }
 
     void reinitFxModels() {
-        progressIndicator.setVisible(true);
-        waitLabel.setVisible(true);
         Task<AlbumFxModel> createAlbumFxmodelTask = new AlbumFxModelTask();
         createAlbumFxmodelTask.setOnSucceeded(e -> {
             this.albumFxModel = createAlbumFxmodelTask.getValue();
             Task<ArtistFxModel> createArtistFxModelTask = new ArtistFxModelTask();
             createArtistFxModelTask.setOnSucceeded(e1 -> {
                 this.artistFxModel = createArtistFxModelTask.getValue();
-                this.albumsTextField.clear();
-                this.unKnownArtistCheckBox.setSelected(false);
+                clearFields();
                 bindings();
-                progressIndicator.setVisible(false);
-                waitLabel.setVisible(false);
+                closeWaitWindow();
             });
             executor.execute(createArtistFxModelTask);
         });
         executor.execute(createAlbumFxmodelTask);
     }
 
-
+    private void clearFields() {
+        this.artistComboBox.getSelectionModel().clearSelection();
+        this.albumComboBox.getSelectionModel().clearSelection();
+        this.albumsTextField.clear();
+        this.unKnownArtistCheckBox.setSelected(false);
+    }
 }

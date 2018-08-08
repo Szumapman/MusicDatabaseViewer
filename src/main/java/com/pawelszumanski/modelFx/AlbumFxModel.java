@@ -36,17 +36,17 @@ public class AlbumFxModel {
     private ObservableList<AlbumsFx> albumsList = FXCollections.observableArrayList();
     private ObservableList<ArtistsFx> artistsFxObservableList = FXCollections.observableArrayList();
     private ObservableList<SongsFx> songsFxObservableList = FXCollections.observableArrayList();
-    private ObjectProperty<AlbumsFx> albumsFxObjectProperty = new SimpleObjectProperty<>(new AlbumsFx());
+    private ObjectProperty<AlbumsFx> albumsFx = new SimpleObjectProperty<>(new AlbumsFx());
     private TreeItem<String> root = new TreeItem<>();
 
     private boolean taskInProgress;
 
     public void init() throws ApplicationExceptions {
-        initArtistsFxObservableList();
         AlbumsDao albumsDao = new AlbumsDao();
         List<Albums> albums = albumsDao.queryForAll(Albums.class);
         initAlbumsList(albums);
         initRoot(albums);
+        initArtistsFxObservableList();
     }
 
     private void initArtistsFxObservableList() throws ApplicationExceptions {
@@ -66,7 +66,7 @@ public class AlbumFxModel {
         SongsDao songsDao = new SongsDao();
         List<Songs> songsList = songsDao.queryForAll(Songs.class);
         songsList.forEach(song -> {
-            if(song.getAlbum().get_id() == albumsFxObjectProperty.get().getId()){
+            if(song.getAlbum().get_id() == albumsFx.get().getId()){
                 SongsFx songsFx = ConvertSong.convertToSongsFx(song);
                 songsFxObservableList.add(songsFx);
             }
@@ -87,10 +87,10 @@ public class AlbumFxModel {
 
     public void updateAlbumInDataBase() throws ApplicationExceptions {
         AlbumsDao albumsDao = new AlbumsDao();
-        Albums tempAlbum = albumsDao.findByID(Albums.class, getAlbumsFxObjectProperty().getId());
-        tempAlbum.setName(getAlbumsFxObjectProperty().getName());
+        Albums tempAlbum = albumsDao.findByID(Albums.class, getAlbumsFx().getId());
+        tempAlbum.setName(getAlbumsFx().getName());
         ArtistsDao artistsDao = new ArtistsDao();
-        Artists tempArtist = artistsDao.findByID(Artists.class, getAlbumsFxObjectProperty().getArtistFx().getId());
+        Artists tempArtist = artistsDao.findByID(Artists.class, getAlbumsFx().getArtistFx().getId());
         tempAlbum.setArtist(tempArtist);
         albumsDao.createOrUpdate(tempAlbum);
 //        init();
@@ -99,7 +99,7 @@ public class AlbumFxModel {
     public void deleteAlbumById() throws ApplicationExceptions {
 
         AlbumsDao albumsDao = new AlbumsDao();
-        albumsDao.deleteById(Albums.class, this.getAlbumsFxObjectProperty().getId());
+        albumsDao.deleteById(Albums.class, this.getAlbumsFx().getId());
         /*
         Uzupełnić usuwanie piosenek.
          */
@@ -139,12 +139,12 @@ public class AlbumFxModel {
         this.albumsList = albumsList;
     }
 
-    public AlbumsFx getAlbumsFxObjectProperty() {
-        return albumsFxObjectProperty.get();
+    public AlbumsFx getAlbumsFx() {
+        return albumsFx.get();
     }
 
-    public ObjectProperty<AlbumsFx> albumsFxObjectPropertyProperty() {
-        return albumsFxObjectProperty;
+    public ObjectProperty<AlbumsFx> albumsFxProperty() {
+        return albumsFx;
     }
 
     public ObservableList<ArtistsFx> getArtistsFxObservableList() {
@@ -155,8 +155,8 @@ public class AlbumFxModel {
         this.artistsFxObservableList = artistsFxObservableList;
     }
 
-    public void setAlbumsFxObjectProperty(AlbumsFx albumsFxObjectProperty) {
-        this.albumsFxObjectProperty.set(albumsFxObjectProperty);
+    public void setAlbumsFx(AlbumsFx albumsFx) {
+        this.albumsFx.set(albumsFx);
     }
 
     public ObservableList<SongsFx> getSongsFxObservableList() {

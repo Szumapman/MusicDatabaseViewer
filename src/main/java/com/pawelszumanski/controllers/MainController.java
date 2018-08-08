@@ -12,14 +12,11 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class MainController {
+public class MainController extends SuperWaitWindow {
 
     @FXML
     private BorderPane mainWindow;
@@ -27,19 +24,9 @@ public class MainController {
     @FXML
     private TopMenuButtonsController topMenuButtonsController;
 
-    @FXML
-    private ProgressIndicator progressIndicator;
-
-    @FXML
-    private VBox centerVBox;
-
-    @FXML
-    private Label waitLabel;
 
     @FXML
     private void initialize(){
-        progressIndicator.setVisible(false);
-        waitLabel.setVisible(false);
         topMenuButtonsController.setMainController(this);
     }
 
@@ -55,20 +42,12 @@ public class MainController {
                 }
             };
 
-            mainWindow.setCenter(centerVBox);
-            progressIndicator.setVisible(true);
-            waitLabel.setVisible(true);
-
+            showWaitWindow();
             task.setOnSucceeded(e -> {
-                progressIndicator.setVisible(false);
-                waitLabel.setVisible(false);
-                Pane pane = task.getValue();
-                mainWindow.setCenter(pane);
+                closeWaitWindow();
+                mainWindow.setCenter(task.getValue());
             });
-            task.setOnFailed(e -> {
-                progressIndicator.setVisible(false);
-                waitLabel.setVisible(false);
-            });
+            task.setOnFailed(e -> closeWaitWindow());
 
             new Thread(task).start();
         }

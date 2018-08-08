@@ -7,28 +7,19 @@ package com.pawelszumanski.controllers;
 import com.pawelszumanski.modelFx.ArtistFxModel;
 import com.pawelszumanski.modelFx.ArtistsFx;
 import com.pawelszumanski.utils.DialogsUtils;
-import com.pawelszumanski.utils.FxmlUtils;
 import com.pawelszumanski.utils.exceptions.ApplicationExceptions;
 import com.pawelszumanski.utils.tasks.ArtistFxModelTask;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
-import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import static com.pawelszumanski.utils.PathUtils.WAIT_WINDOW_FXML;
-
-public class ArtistsController {
+public class ArtistsController extends SuperWaitWindow {
 
     @FXML
     private TreeView<String> artistsTreeView;
@@ -51,7 +42,6 @@ public class ArtistsController {
 
     private ArtistFxModel artistFxModel;
     private Executor executor;
-    private Stage stage;
 
 
     @FXML
@@ -84,7 +74,7 @@ public class ArtistsController {
 
     @FXML
     private void saveArtistOnAction() {
-        createAndShowWaitWindow();
+        showWaitWindow();
         final ArtistFxModel taskArtistFxModel = this.artistFxModel;
         final String newArtistName = artistTextField.getText();
         Task<ArtistFxModel> saveArtistTask = new Task<ArtistFxModel>() {
@@ -112,7 +102,7 @@ public class ArtistsController {
 
         String newArtistName = DialogsUtils.editDialog(this.artistFxModel.getArtistsFxObjectProperty().getName());
         if(newArtistName != null && (!newArtistName.equals(this.artistFxModel.getArtistsFxObjectProperty().getName()))){
-            createAndShowWaitWindow();
+            showWaitWindow();
             this.artistFxModel.getArtistsFxObjectProperty().setName(newArtistName);
             final ArtistFxModel taskArtistFxModel = this.artistFxModel;
             Task<ArtistFxModel> updateArtistTask = new Task<ArtistFxModel>() {
@@ -136,7 +126,7 @@ public class ArtistsController {
         String artistToDelete = this.artistFxModel.getArtistsFxObjectProperty().getName();
         boolean deleteArtist = DialogsUtils.deleteConfirmationDialog(artistToDelete);
         if(deleteArtist){
-            createAndShowWaitWindow();
+            showWaitWindow();
             final ArtistFxModel taskArtistFxModel = this.artistFxModel;
             Task<ArtistFxModel> deleteArtistTask = new Task<ArtistFxModel>() {
                 @Override
@@ -160,23 +150,8 @@ public class ArtistsController {
             this.artistFxModel = createArtistFxModelTask.getValue();
             bindings();
             artistTextField.clear();
-            stage.close();
+            closeWaitWindow();
         });
         executor.execute(createArtistFxModelTask);
-    }
-
-    private void createAndShowWaitWindow() {
-        FXMLLoader loader = FxmlUtils.getLoader(WAIT_WINDOW_FXML);
-        Scene waitScene = null;
-        try {
-            waitScene = new Scene(loader.load());
-        } catch (IOException e) {
-            DialogsUtils.errorDialog(e.getMessage());
-        }
-        stage = new Stage(StageStyle.UNDECORATED);
-        stage.setScene(waitScene);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setAlwaysOnTop(true);
-        stage.show();
     }
 }

@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class EditAlbumController {
+public class EditAlbumController extends SuperWaitWindow {
 
     @FXML
     private Label albumTitleLabel;
@@ -46,19 +46,14 @@ public class EditAlbumController {
     @FXML
     private TableColumn<SongsFx, String> songsTableColumn;
 
-    @FXML
-    private ProgressBar progressBar;
-
     private AlbumsController albumsController;
-
-
     private AlbumFxModel albumFxModel;
     private Executor executor;
     private Stage stage;
 
     @FXML
     public void initialize(){
-        progressBar.setVisible(true);
+        showWaitWindow();
         albumTitleLabel.setVisible(false);
         albumTitleTextField.setVisible(false);
         artistLabel.setVisible(false);
@@ -78,8 +73,8 @@ public class EditAlbumController {
 
     private void binding() {
         this.artistsComboBox.setItems(this.albumFxModel.getArtistsFxObservableList());
-        this.albumTitleTextField.textProperty().bindBidirectional(this.albumFxModel.getAlbumsFxObjectProperty().nameProperty());
-        this.artistsComboBox.valueProperty().bindBidirectional(this.albumFxModel.getAlbumsFxObjectProperty().artistFxProperty());
+        this.albumTitleTextField.textProperty().bindBidirectional(this.albumFxModel.getAlbumsFx().nameProperty());
+        this.artistsComboBox.valueProperty().bindBidirectional(this.albumFxModel.getAlbumsFx().artistFxProperty());
         this.saveButton.disableProperty().bind(this.albumTitleTextField.textProperty().isEmpty());
         this.songsTableView.setItems(this.albumFxModel.getSongsFxObservableList());
         this.trackNoTableColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().getTrack()));
@@ -88,11 +83,12 @@ public class EditAlbumController {
 
     @FXML
     private void artistsComboBoxOnAction() {
-        this.albumFxModel.getAlbumsFxObjectProperty().setArtistFx(this.artistsComboBox.getSelectionModel().getSelectedItem());
+        this.albumFxModel.getAlbumsFx().setArtistFx(this.artistsComboBox.getSelectionModel().getSelectedItem());
     }
 
     @FXML
     private void saveButtonOnAction() {
+        albumsController.showWaitWindow();
         final AlbumFxModel taskAlbumFxModel = this.albumFxModel;
         Task<AlbumFxModel> updateAlbumTask = new Task<AlbumFxModel>() {
 
@@ -108,7 +104,9 @@ public class EditAlbumController {
             }
         };
 
-        updateAlbumTask.setOnSucceeded(e -> stage.close());
+        updateAlbumTask.setOnSucceeded(e -> {
+            stage.close();
+        });
         executor.execute(updateAlbumTask);
     }
 
@@ -148,6 +146,7 @@ public class EditAlbumController {
         initSongsListTask.setOnSucceeded(e -> {
             this.albumFxModel = initSongsListTask.getValue();
             binding();
+            closeWaitWindow();
             albumTitleLabel.setVisible(true);
             albumTitleTextField.setVisible(true);
             artistLabel.setVisible(true);
@@ -155,7 +154,6 @@ public class EditAlbumController {
             saveButton.setVisible(true);
             cancelButton.setVisible(true);
             songsTableView.setVisible(true);
-            progressBar.setVisible(false);
         });
         executor.execute(initSongsListTask);
     }
