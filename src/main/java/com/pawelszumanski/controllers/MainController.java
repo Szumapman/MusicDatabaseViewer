@@ -18,13 +18,15 @@ import javafx.stage.Stage;
 
 import static com.pawelszumanski.utils.PathUtils.SONGS_FXML;
 
-public class MainController extends SuperWaitWindow {
+public class MainController implements WaitWindow {
 
     @FXML
     private BorderPane mainWindow;
 
     @FXML
     private TopMenuButtonsController topMenuButtonsController;
+
+    private Stage waitStage;
 
     @FXML
     private void initialize(){
@@ -44,12 +46,17 @@ public class MainController extends SuperWaitWindow {
                 }
             };
 
-            showWaitWindow();
+            waitStage = this.getWaitStage();
+            waitStage.show();
+//            showWaitWindow();
             task.setOnSucceeded(e -> {
-                closeWaitWindow();
+                waitStage.close();
+//                closeWaitWindow();
                 mainWindow.setCenter(task.getValue());
             });
-            task.setOnFailed(e -> closeWaitWindow());
+            task.setOnFailed(e ->
+                    waitStage.close());
+//                    closeWaitWindow());
 
             new Thread(task).start();
         }
