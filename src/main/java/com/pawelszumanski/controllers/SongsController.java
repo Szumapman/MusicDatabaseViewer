@@ -10,11 +10,9 @@ import com.pawelszumanski.utils.FxmlUtils;
 import com.pawelszumanski.utils.exceptions.ApplicationExceptions;
 import com.pawelszumanski.utils.tasks.SongFxModelTask;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -27,7 +25,7 @@ import java.util.concurrent.Executors;
 
 import static com.pawelszumanski.utils.PathUtils.EDIT_SONG_FXML;
 
-public class SongsController implements WaitWindow{
+public class SongsController {
     @FXML
     private TableView<SongsFx> songsTableView;
 
@@ -41,16 +39,11 @@ public class SongsController implements WaitWindow{
     private TableColumn<SongsFx, ArtistsFx> artistColumn;
 
     @FXML
-    private Button addSongButton;
-
-    @FXML
     private MenuItem editMenuItem;
 
     private SongFxModel songFxModel;
     private Executor executor;
     private EditSongController editSongController;
-    private Stage waitStage;
-
 
     @FXML
     void initialize(){
@@ -78,30 +71,27 @@ public class SongsController implements WaitWindow{
         this.albumColumn.setCellValueFactory(cellData -> cellData.getValue().albumsFxProperty());
         this.artistColumn.setCellValueFactory(cellData -> cellData.getValue().getAlbumsFx().artistFxProperty());
         this.editMenuItem.disableProperty().bind(this.songsTableView.getSelectionModel().selectedItemProperty().isNull());
-        this.songsTableView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
-            this.songFxModel.setSongsFxObjectProperty(newValue);
-        }));
+        this.songsTableView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> this.songFxModel.setSongsFxObjectProperty(newValue)));
     }
 
     @FXML
     private void addSongButtonOnAction() {
         AlbumFxModel albumFxModel = new AlbumFxModel();
+        albumFxModel.setAlbumsFxObjectProperty(setAlbumAndArtistAsUnknown());
+        this.songFxModel.getSongsFxObjectProperty().setAlbumsFx(albumFxModel.getAlbumsFxObjectProperty());
+        EditSongController editSongController = getEditSongController();
+        editSongController.getStage().showAndWait();
+    }
+
+    private AlbumsFx setAlbumAndArtistAsUnknown(){
         AlbumsFx albumsFx = new AlbumsFx();
-        albumsFx.setId(445);
+        albumsFx.setId(1);
         albumsFx.setName("Album nieznany");
         ArtistsFx artistsFx = new ArtistsFx();
-        artistsFx.setId(202);
+        artistsFx.setId(1);
         artistsFx.setName("Artysta nieznany");
         albumsFx.setArtistFx(artistsFx);
-        albumFxModel.setAlbumsFxObjectProperty(albumsFx);
-        this.songFxModel.getSongsFxObjectProperty().setAlbumsFx(albumFxModel.getAlbumsFxObjectProperty());
-
-//        showWaitWindow();
-        EditSongController editSongController = getEditSongController();
-//        editSongController.setUnknownAlbumAndArtist();
-
-//        closeWaitWindow();
-        editSongController.getStage().showAndWait();
+        return albumsFx;
     }
 
     private EditSongController getEditSongController() {
@@ -119,7 +109,6 @@ public class SongsController implements WaitWindow{
         stage.setScene(scene);
         editSongController = loader.getController();
         editSongController.setStage(stage);
-//        editSongController.getStage().show();
         editSongController.setSongsController(this);
         editSongController.setSongFxModel(this.songFxModel);
         editSongController.binding();
@@ -127,23 +116,18 @@ public class SongsController implements WaitWindow{
     }
 
     @FXML
-    private void editMenuItemOnAction(ActionEvent event) {
-//        showWaitWindow();
+    private void editMenuItemOnAction() {
         EditSongController editSongController = getEditSongController();
-//        closeWaitWindow();
         editSongController.getStage().showAndWait();
     }
 
 
     void reinitFxModel() {
-//        waitStage = this.getWaitStage();
-//        waitStage.show();
         Task<SongFxModel> createSongFxModel = new SongFxModelTask();
         createSongFxModel.setOnSucceeded(e -> {
             this.songFxModel = createSongFxModel.getValue();
             bindings();
             editSongController.getStage().close();
-//            waitStage.close();
         });
         executor.execute(createSongFxModel);
     }

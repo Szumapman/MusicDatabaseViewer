@@ -4,7 +4,6 @@
 
 package com.pawelszumanski.modelFx;
 
-import com.pawelszumanski.controllers.WaitWindow;
 import com.pawelszumanski.database.dao.AlbumsDao;
 import com.pawelszumanski.database.dao.ArtistsDao;
 import com.pawelszumanski.database.dao.SongsDao;
@@ -31,7 +30,7 @@ import java.util.ResourceBundle;
 import static com.pawelszumanski.utils.PathUtils.ICONS_MUSIC_BASE_16_PNG;
 import static com.pawelszumanski.utils.PathUtils.ICONS_SONG_PNG;
 
-public class AlbumFxModel implements WaitWindow {
+public class AlbumFxModel {
 
     private static ResourceBundle resourceBundle = FxmlUtils.getResourceBundle();
 
@@ -44,7 +43,7 @@ public class AlbumFxModel implements WaitWindow {
     public void init() throws ApplicationExceptions {
         AlbumsDao albumsDao = new AlbumsDao();
         List<Albums> albums = albumsDao.queryForAll(Albums.class);
-        albums.sort((album1, album2) -> album1.getName().compareTo(album2.getName()));
+        albums.sort(Comparator.comparing(Albums::getName));
         initAlbumsList(albums);
         initRoot(albums);
         initArtistsFxObservableList();

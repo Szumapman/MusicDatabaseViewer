@@ -33,7 +33,7 @@
       </TableView>
    </center>
    <bottom>
-      <Button fx:id="addSongButton" mnemonicParsing="false" onAction="#addSongButtonOnAction" text="%add.song" textAlignment="CENTER" BorderPane.alignment="CENTER">
+      <Button mnemonicParsing="false" onAction="#addSongButtonOnAction" text="%add.song" textAlignment="CENTER" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="5.0" top="5.0" />
          </BorderPane.margin></Button>

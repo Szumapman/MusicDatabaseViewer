@@ -141,7 +141,7 @@ public class AlbumsController implements WaitWindow{
         editAlbumController.getStage().showAndWait();
     }
 
-    void closeWaitWindow() {
+    private void closeWaitWindow() {
         if(waitStage != null) waitStage.close();
     }
 
@@ -219,8 +219,10 @@ public class AlbumsController implements WaitWindow{
                 bindings();
                 closeWaitWindow();
             });
+            createArtistFxModelTask.setOnFailed(e1 -> closeWaitWindow() );
             executor.execute(createArtistFxModelTask);
         });
+        createAlbumFxmodelTask.setOnFailed(e -> closeWaitWindow());
         executor.execute(createAlbumFxmodelTask);
     }
 

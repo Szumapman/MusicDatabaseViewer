@@ -107,9 +107,8 @@ public class EditAlbumController {
             }
         };
 
-        updateAlbumTask.setOnSucceeded(e -> {
-            stage.close();
-        });
+        updateAlbumTask.setOnSucceeded(e -> stage.close());
+        updateAlbumTask.setOnFailed(e -> stage.close());
         executor.execute(updateAlbumTask);
     }
 

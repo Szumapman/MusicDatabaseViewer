@@ -37,8 +37,4 @@ public class TopMenuButtonsController {
     void setMainController(MainController mainController) {
         this.mainController = mainController;
     }
-
-    MainController getMainController() {
-        return mainController;
-    }
 }

@@ -140,8 +140,8 @@ public class ArtistsController implements WaitWindow {
                 protected ArtistFxModel call()  {
                     try {
                         taskArtistFxModel.deleteArtistById();
-                    } catch (ApplicationExceptions applicationExceptions) {
-                        DialogsUtils.errorDialog(applicationExceptions.getMessage());
+                    } catch (Exception e) {
+                        DialogsUtils.errorDialog(e.getMessage());
                     }
                     return taskArtistFxModel;
                 }
@@ -159,6 +159,7 @@ public class ArtistsController implements WaitWindow {
             artistTextField.clear();
             waitStage.close();
         });
+        createArtistFxModelTask.setOnFailed(e-> waitStage.close());
         executor.execute(createArtistFxModelTask);
     }
 }

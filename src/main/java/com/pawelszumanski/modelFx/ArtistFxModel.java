@@ -4,8 +4,12 @@
 
 package com.pawelszumanski.modelFx;
 
+import com.pawelszumanski.database.dao.AlbumsDao;
 import com.pawelszumanski.database.dao.ArtistsDao;
+import com.pawelszumanski.database.dao.SongsDao;
+import com.pawelszumanski.database.models.Albums;
 import com.pawelszumanski.database.models.Artists;
+import com.pawelszumanski.database.models.Songs;
 import com.pawelszumanski.utils.FxmlUtils;
 import com.pawelszumanski.utils.converters.ConvertArtist;
 import com.pawelszumanski.utils.exceptions.ApplicationExceptions;
@@ -16,6 +20,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -33,7 +40,7 @@ public class ArtistFxModel {
     public void init() throws ApplicationExceptions {
         ArtistsDao artistsDao = new ArtistsDao();
         List<Artists> artists = artistsDao.queryForAll(Artists.class);
-        artists.sort((artist1, artist2) -> artist1.getName().compareToIgnoreCase(artist2.getName()));
+        artists.sort(Comparator.comparing(Artists::getName));
         initArtistsFxObservableList(artists);
         initRoot(artists);
     }
@@ -43,7 +50,6 @@ public class ArtistFxModel {
         Artists arist = new Artists();
         arist.setName(name);
         artistsDao.createOrUpdate(arist);
-//        init();
     }
 
     public void updateArtistInDataBase() throws ApplicationExceptions {
@@ -55,13 +61,29 @@ public class ArtistFxModel {
     }
 
 
-    public void deleteArtistById() throws ApplicationExceptions {
-        ArtistsDao artistsDao = new ArtistsDao();
-        artistsDao.deleteById(Artists.class, this.getArtistsFxObjectProperty().getId());
-        /*
-        Uzupełnić usuwanie albumów i dalej piosenek.
-         */
-//        this.init();
+    public void deleteArtistById() throws ApplicationExceptions, SQLException {
+        AlbumsDao albumsDao = new AlbumsDao();
+        SongsDao songsDao = new SongsDao();
+        List<Albums> albums = albumsDao.queryForAll(Albums.class);
+        List<Albums> albumsToDelete = new ArrayList<>();
+        albums.forEach(album -> {
+            if(album.getArtist().get_id() == artistsFxObjectProperty.get().getId()){
+                albumsToDelete.add(album);
+            }
+        });
+        for (Albums album : albumsToDelete) {
+            if (this.getArtistsFxObjectProperty().getName().equals(resourceBundle.getString("unknown.artists")) ||
+                    album.getName().equals(resourceBundle.getString("unknown.album"))) {
+                songsDao.deleteByColumnName(Songs.class, Songs.ALBUM_ID, album.get_id());
+            } else {
+                songsDao.deleteByColumnName(Songs.class, Songs.ALBUM_ID, album.get_id());
+                albumsDao.deleteById(Albums.class, album.get_id());
+            }
+        }
+        if(!this.getArtistsFxObjectProperty().getName().equals(resourceBundle.getString("unknown.artists"))){
+            ArtistsDao artistsDao = new ArtistsDao();
+            artistsDao.deleteById(Artists.class, this.getArtistsFxObjectProperty().getId());
+        }
     }
 
     public ArtistsFx setUnknownArtist() throws ApplicationExceptions {
@@ -103,7 +125,7 @@ public class ArtistFxModel {
         this.artistsFxObservableList.clear();
         artists.forEach(a -> {
             ArtistsFx artistsFx = ConvertArtist.convertToArtistFx(a);
-            if(!artistsFx.getName().equals(resourceBundle.getString("unknown.artists"))){
+            if (!artistsFx.getName().equals(resourceBundle.getString("unknown.artists"))) {
                 artistsFxObservableList.add(artistsFx);
             }
         });
@@ -128,7 +150,6 @@ public class ArtistFxModel {
     public void setArtistsFxObjectProperty(ArtistsFx artistsFxObjectProperty) {
         this.artistsFxObjectProperty.set(artistsFxObjectProperty);
     }
-
 
 
     public TreeItem<String> getRoot() {
