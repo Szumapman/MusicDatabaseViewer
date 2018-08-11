@@ -16,6 +16,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import static com.pawelszumanski.utils.PathUtils.SONGS_FXML;
+
 public class MainController extends SuperWaitWindow {
 
     @FXML
@@ -24,10 +26,10 @@ public class MainController extends SuperWaitWindow {
     @FXML
     private TopMenuButtonsController topMenuButtonsController;
 
-
     @FXML
     private void initialize(){
         topMenuButtonsController.setMainController(this);
+        setCenter(SONGS_FXML);
     }
 
     private String actualCenterFxmlPath = null;

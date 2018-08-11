@@ -27,7 +27,7 @@
                   <Label text="%choose.artistsFxObjectProperty" />
                   <ComboBox fx:id="artistComboBox" onAction="#artistComboBoxOnAction" prefWidth="150.0" />
                   <CheckBox fx:id="unKnownArtistCheckBox" mnemonicParsing="false" onAction="#unknownArtistOnAction" text="%unknown.artists" />
-                  <Button fx:id="saveAlbumButton" mnemonicParsing="false" onAction="#saveAlbumOnAction" text="%save.album" />
+                  <Button fx:id="saveAlbumButton" mnemonicParsing="false" onAction="#saveAlbumOnAction" text="%save.button" />
                </children>
                <opaqueInsets>
                   <Insets />

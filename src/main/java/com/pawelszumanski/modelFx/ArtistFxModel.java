@@ -33,6 +33,7 @@ public class ArtistFxModel {
     public void init() throws ApplicationExceptions {
         ArtistsDao artistsDao = new ArtistsDao();
         List<Artists> artists = artistsDao.queryForAll(Artists.class);
+        artists.sort((artist1, artist2) -> artist1.getName().compareToIgnoreCase(artist2.getName()));
         initArtistsFxObservableList(artists);
         initRoot(artists);
     }
@@ -63,13 +64,13 @@ public class ArtistFxModel {
 //        this.init();
     }
 
-    public void setUnknownArtist() throws ApplicationExceptions {
+    public ArtistsFx setUnknownArtist() throws ApplicationExceptions {
         ArtistsDao artistsDao = new ArtistsDao();
         List<Artists> artists = artistsDao.queryForAll(Artists.class);
         this.setArtistsFxObjectProperty(null);
-        for (Artists a : artists) {
-            if (a.getName().equals(resourceBundle.getString("unknown.artists"))) {
-                this.setArtistsFxObjectProperty(ConvertArtist.convertToArtistFx(a));
+        for (Artists artist : artists) {
+            if (artist.getName().equals(resourceBundle.getString("unknown.artists"))) {
+                this.setArtistsFxObjectProperty(ConvertArtist.convertToArtistFx(artist));
                 break;
             }
         }
@@ -79,7 +80,8 @@ public class ArtistFxModel {
             artistsDao.createOrUpdate(unknownArtist);
             setArtistsFxObjectProperty(ConvertArtist.convertToArtistFx(unknownArtist));
         }
-        this.init();
+//        this.init();
+        return this.getArtistsFxObjectProperty();
     }
 
     private void initRoot(List<Artists> artists) {

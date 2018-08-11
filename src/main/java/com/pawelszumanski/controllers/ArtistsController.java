@@ -15,11 +15,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
+import javafx.stage.Stage;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class ArtistsController extends SuperWaitWindow {
+public class ArtistsController implements WaitWindow {
 
     @FXML
     private TreeView<String> artistsTreeView;
@@ -42,6 +43,7 @@ public class ArtistsController extends SuperWaitWindow {
 
     private ArtistFxModel artistFxModel;
     private Executor executor;
+    private Stage waitStage;
 
 
     @FXML
@@ -90,6 +92,11 @@ public class ArtistsController extends SuperWaitWindow {
         };
         saveArtistTask.setOnSucceeded(e-> reinitArtistFxModel());
         executor.execute(saveArtistTask);
+    }
+
+    private void showWaitWindow() {
+        waitStage = this.getWaitStage();
+        waitStage.show();
     }
 
     @FXML
@@ -150,7 +157,7 @@ public class ArtistsController extends SuperWaitWindow {
             this.artistFxModel = createArtistFxModelTask.getValue();
             bindings();
             artistTextField.clear();
-            closeWaitWindow();
+            waitStage.close();
         });
         executor.execute(createArtistFxModelTask);
     }

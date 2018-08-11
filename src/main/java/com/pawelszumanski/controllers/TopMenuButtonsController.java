@@ -14,9 +14,12 @@ public class TopMenuButtonsController {
 
     private MainController mainController;
 
+
+
     @FXML
     private void openSongs( ) {
         mainController.setCenter(SONGS_FXML);
+
     }
 
     @FXML
@@ -35,4 +38,7 @@ public class TopMenuButtonsController {
         this.mainController = mainController;
     }
 
+    MainController getMainController() {
+        return mainController;
+    }
 }

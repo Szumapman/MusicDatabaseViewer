@@ -14,4 +14,11 @@ public class ConvertArtist {
         artistsFx.setName(artist.getName());
         return artistsFx;
     }
+
+    public static Artists convertToArtist(ArtistsFx artistsFx) {
+        Artists artist = new Artists();
+        artist.set_id(artistsFx.getId());
+        artist.setName(artistsFx.getName());
+        return artist;
+    }
 }

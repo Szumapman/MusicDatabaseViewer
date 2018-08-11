@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -28,8 +29,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import static com.pawelszumanski.utils.PathUtils.EDIT_ALBUM_FXML;
+import static com.pawelszumanski.utils.PathUtils.ICONS_MUSIC_BASE_32_PNG;
 
-public class AlbumsController extends SuperWaitWindow{
+public class AlbumsController implements WaitWindow{
 
     private static ResourceBundle resourceBundle = FxmlUtils.getResourceBundle();
 
@@ -62,6 +64,7 @@ public class AlbumsController extends SuperWaitWindow{
     private Executor executor;
     private AlbumFxModel albumFxModel;
     private ArtistFxModel artistFxModel;
+    private Stage waitStage;
 
     @FXML
     public void initialize() {
@@ -74,6 +77,7 @@ public class AlbumsController extends SuperWaitWindow{
             DialogsUtils.errorDialog(applicationExceptions.getMessage());
         }
         bindings();
+        albumComboBoxOnAction();
 
         executor = Executors.newCachedThreadPool(runnable -> {
             Thread thread = new Thread(runnable);
@@ -88,8 +92,8 @@ public class AlbumsController extends SuperWaitWindow{
         this.albumComboBox.setItems(this.albumFxModel.getAlbumsList());
         this.artistComboBox.setItems(this.albumFxModel.getArtistsFxObservableList());
         this.saveAlbumButton.disableProperty().bind(this.albumsTextField.textProperty().isEmpty().or(this.artistFxModel.artistsFxObjectPropertyProperty().isNull()));
-        this.editAlbumButton.disableProperty().bind(this.albumFxModel.albumsFxProperty().isNull());
-        this.deleteAlbumButton.disableProperty().bind(this.albumFxModel.albumsFxProperty().isNull());
+        this.editAlbumButton.disableProperty().bind(this.albumFxModel.albumsFxObjectPropertyProperty().isNull());
+        this.deleteAlbumButton.disableProperty().bind(this.albumFxModel.albumsFxObjectPropertyProperty().isNull());
     }
 
 
@@ -100,6 +104,8 @@ public class AlbumsController extends SuperWaitWindow{
 
     @FXML
     private void saveAlbumOnAction() {
+//        showWaitWindow();
+
         showWaitWindow();
         final AlbumFxModel taskAlbumFxModel = this.albumFxModel;
         final ArtistFxModel taskArtistFxModel = this.artistFxModel;
@@ -120,13 +126,31 @@ public class AlbumsController extends SuperWaitWindow{
 
     @FXML
     private void albumComboBoxOnAction() {
-        this.albumFxModel.setAlbumsFx(this.albumComboBox.getSelectionModel().getSelectedItem());
+        this.albumFxModel.setAlbumsFxObjectProperty(this.albumComboBox.getSelectionModel().getSelectedItem());
     }
 
     @FXML
     private void editAlbumOnAction() {
-
         FXMLLoader loader = FxmlUtils.getLoader(EDIT_ALBUM_FXML);
+        Stage stage = createStageForEditAlbumController(loader);
+        EditAlbumController editAlbumController = loader.getController();
+        editAlbumController.setStage(stage);
+        editAlbumController.setAlbumsController(this);
+        editAlbumController.setAlbumFxModel(this.albumFxModel);
+        editAlbumController.initSongsListAndBinding();
+        editAlbumController.getStage().showAndWait();
+    }
+
+    void closeWaitWindow() {
+        if(waitStage != null) waitStage.close();
+    }
+
+    void showWaitWindow() {
+        waitStage = this.getWaitStage();
+        waitStage.show();
+    }
+
+    private Stage createStageForEditAlbumController(FXMLLoader loader) {
         Scene scene = null;
         try {
             scene = new Scene(loader.load());
@@ -138,18 +162,14 @@ public class AlbumsController extends SuperWaitWindow{
         stage.setResizable(false);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
-        EditAlbumController editAlbumController = loader.getController();
-        editAlbumController.setStage(stage);
-        editAlbumController.getStage().show();
-        editAlbumController.setAlbumsController(this);
-        editAlbumController.setAlbumFxModel(this.albumFxModel);
-        editAlbumController.initSongsListAndBinding();
-        editAlbumController.getStage().showAndWait();
+        stage.getIcons().add(new Image(this.getClass().getResource(ICONS_MUSIC_BASE_32_PNG).toString()));
+        stage.setTitle(FxmlUtils.getResourceBundle().getString("edit.album.page.title"));
+        return stage;
     }
 
     @FXML
     private void deleteAlbumOnAction() {
-        String albumToDelete = this.albumFxModel.getAlbumsFx().getName();
+        String albumToDelete = this.albumFxModel.getAlbumsFxObjectProperty().getName();
         boolean deleteAlbum = DialogsUtils.deleteConfirmationDialog(albumToDelete);
         if (deleteAlbum) {
             showWaitWindow();
@@ -210,4 +230,5 @@ public class AlbumsController extends SuperWaitWindow{
         this.albumsTextField.clear();
         this.unKnownArtistCheckBox.setSelected(false);
     }
+
 }

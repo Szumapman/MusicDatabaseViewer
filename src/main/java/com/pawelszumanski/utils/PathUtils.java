@@ -16,5 +16,6 @@ public class PathUtils {
     public static final String ARTISTS_FXML = "/fxml/Aritsts.fxml";
     public static final String EDIT_ALBUM_FXML = "/fxml/EditAlbum.fxml";
     public static final String WAIT_WINDOW_FXML = "/fxml/WaitWindow.fxml";
+    public static final String EDIT_SONG_FXML = "/fxml/EditSong.fxml";
 
 }
