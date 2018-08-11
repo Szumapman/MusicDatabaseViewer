@@ -179,8 +179,8 @@ public class AlbumsController implements WaitWindow{
                 protected AlbumFxModel call() {
                     try {
                         taskAlbumFxModel.deleteAlbumById();
-                    } catch (ApplicationExceptions applicationExceptions) {
-                        DialogsUtils.errorDialog(applicationExceptions.getMessage());
+                    } catch (Exception e) {
+                        DialogsUtils.errorDialog(e.getMessage());
                     }
                     return taskAlbumFxModel;
                 }

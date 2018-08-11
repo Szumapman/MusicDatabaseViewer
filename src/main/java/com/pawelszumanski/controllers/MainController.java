@@ -48,16 +48,11 @@ public class MainController implements WaitWindow {
 
             waitStage = this.getWaitStage();
             waitStage.show();
-//            showWaitWindow();
             task.setOnSucceeded(e -> {
                 waitStage.close();
-//                closeWaitWindow();
                 mainWindow.setCenter(task.getValue());
             });
-            task.setOnFailed(e ->
-                    waitStage.close());
-//                    closeWaitWindow());
-
+            task.setOnFailed(e -> waitStage.close());
             new Thread(task).start();
         }
     }

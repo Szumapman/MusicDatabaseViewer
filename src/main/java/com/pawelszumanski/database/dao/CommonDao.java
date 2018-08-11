@@ -8,6 +8,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.pawelszumanski.database.dbutils.DbManager;
@@ -91,7 +92,12 @@ public abstract class CommonDao {
         }
     }
 
-
+    public<T extends BaseModel> void deleteByColumnName(Class<T> cls, String columnName, int id) throws ApplicationExceptions, SQLException {
+        Dao<T, Object> dao = getDao(cls);
+        DeleteBuilder<T, Object> deleteBuilder = dao.deleteBuilder();
+        deleteBuilder.where().eq(columnName, id);
+        dao.delete(deleteBuilder.prepare());
+    }
 
     public <T extends BaseModel, I> List<T> queryForAll(Class<T> cls) throws ApplicationExceptions {
         Dao<T, I> dao = getDao(cls);

@@ -23,6 +23,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -82,7 +83,6 @@ public class AlbumFxModel implements WaitWindow {
         album.setName(name);
         album.setArtist(artist);
         albumsDao.createOrUpdate(album);
-//        init();
     }
 
     public void updateAlbumInDataBase() throws ApplicationExceptions {
@@ -93,17 +93,22 @@ public class AlbumFxModel implements WaitWindow {
         Artists tempArtist = artistsDao.findByID(Artists.class, getAlbumsFxObjectProperty().getArtistFx().getId());
         tempAlbum.setArtist(tempArtist);
         albumsDao.createOrUpdate(tempAlbum);
-//        init();
     }
 
-    public void deleteAlbumById() throws ApplicationExceptions {
+    public void deleteAlbumById() throws ApplicationExceptions, SQLException {
+        if(this.getAlbumsFxObjectProperty().getName().equals(resourceBundle.getString("unknown.album")) &&
+            this.getAlbumsFxObjectProperty().getArtistFx().getName().equals(resourceBundle.getString("unknown.artists"))){
+            deleteSongs();
+        } else {
+            AlbumsDao albumsDao = new AlbumsDao();
+            albumsDao.deleteById(Albums.class, this.getAlbumsFxObjectProperty().getId());
+            deleteSongs();
+        }
+    }
 
-        AlbumsDao albumsDao = new AlbumsDao();
-        albumsDao.deleteById(Albums.class, this.getAlbumsFxObjectProperty().getId());
-        /*
-        Uzupełnić usuwanie piosenek.
-         */
-//        init();
+    private void deleteSongs() throws ApplicationExceptions, SQLException {
+        SongsDao songsDao = new SongsDao();
+        songsDao.deleteByColumnName(Songs.class, Songs.ALBUM_ID, this.getAlbumsFxObjectProperty().getId());
     }
 
 
