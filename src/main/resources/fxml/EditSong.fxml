@@ -48,7 +48,7 @@
          </GridPane.margin></TextField>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
          <children>
-            <Button mnemonicParsing="false" onAction="#saveButtonOnAction" text="%save.button">
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveButtonOnAction" text="%save.button">
                <HBox.margin>
                   <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
                </HBox.margin>
@@ -89,7 +89,7 @@
             </CheckBox>
          </children>
       </HBox>
-      <Spinner fx:id="trackNoSpinner" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+      <Spinner fx:id="trackNoSpinner" GridPane.columnIndex="1" GridPane.rowIndex="3">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>

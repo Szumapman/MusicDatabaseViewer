@@ -27,6 +27,7 @@
             <ContextMenu>
               <items>
                 <MenuItem fx:id="editMenuItem" mnemonicParsing="false" onAction="#editMenuItemOnAction" text="%edit.song" />
+                  <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" onAction="#deleteMenuItemOnAction" text="%delete.song" />
               </items>
             </ContextMenu>
          </contextMenu>

@@ -9,7 +9,6 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.pawelszumanski.database.dbutils.DbManager;
 import com.pawelszumanski.database.models.BaseModel;
@@ -22,7 +21,7 @@ import java.util.List;
 
 public abstract class CommonDao {
     public static final Logger LOGGER = LoggerFactory.getLogger(CommonDao.class);
-    protected final ConnectionSource connectionSource;
+    private final ConnectionSource connectionSource;
 
     public CommonDao(){
         this.connectionSource = DbManager.getConnectionSource();
@@ -112,10 +111,10 @@ public abstract class CommonDao {
         }
     }
 
-    public <T extends BaseModel, I> QueryBuilder<T, I> getQuerBuilder(Class<T> cls) throws ApplicationExceptions {
-        Dao<T, I> dao = getDao(cls);
-        return dao.queryBuilder();
-    }
+//    public <T extends BaseModel, I> QueryBuilder<T, I> getQuerBuilder(Class<T> cls) throws ApplicationExceptions {
+//        Dao<T, I> dao = getDao(cls);
+//        return dao.queryBuilder();
+//    }
 
 
     public <T extends BaseModel, I> Dao<T, I> getDao(Class<T> cls) throws ApplicationExceptions{

@@ -10,6 +10,7 @@ import com.pawelszumanski.utils.FxmlUtils;
 import com.pawelszumanski.utils.exceptions.ApplicationExceptions;
 import com.pawelszumanski.utils.tasks.SongFxModelTask;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -25,7 +26,7 @@ import java.util.concurrent.Executors;
 
 import static com.pawelszumanski.utils.PathUtils.EDIT_SONG_FXML;
 
-public class SongsController {
+public class SongsController implements  WaitWindow {
     @FXML
     private TableView<SongsFx> songsTableView;
 
@@ -41,9 +42,13 @@ public class SongsController {
     @FXML
     private MenuItem editMenuItem;
 
+    @FXML
+    private MenuItem deleteMenuItem;
+
     private SongFxModel songFxModel;
     private Executor executor;
     private EditSongController editSongController;
+    private Stage waitStage;
 
     @FXML
     void initialize(){
@@ -71,6 +76,7 @@ public class SongsController {
         this.albumColumn.setCellValueFactory(cellData -> cellData.getValue().albumsFxProperty());
         this.artistColumn.setCellValueFactory(cellData -> cellData.getValue().getAlbumsFx().artistFxProperty());
         this.editMenuItem.disableProperty().bind(this.songsTableView.getSelectionModel().selectedItemProperty().isNull());
+        this.deleteMenuItem.disableProperty().bind(this.songsTableView.getSelectionModel().selectedItemProperty().isNull());
         this.songsTableView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> this.songFxModel.setSongsFxObjectProperty(newValue)));
     }
 
@@ -121,14 +127,44 @@ public class SongsController {
         editSongController.getStage().showAndWait();
     }
 
+    @FXML
+    private void deleteMenuItemOnAction(ActionEvent actionEvent) {
+        String songToDelete = this.songsTableView.getSelectionModel().getSelectedItem().getTitle();
+        boolean deleteSong = DialogsUtils.deleteConfirmationDialog(songToDelete);
+        if(deleteSong) {
+            showWaitWindow();
+            final SongFxModel taskSongFxModel = this.songFxModel;
+            Task<SongFxModel> deleteSongTask = new Task<SongFxModel>() {
+                @Override
+                protected SongFxModel call() {
+                    try {
+                        taskSongFxModel.deleteSongById();
+                    } catch (ApplicationExceptions applicationExceptions) {
+                        DialogsUtils.errorDialog(applicationExceptions.getMessage());
+                    }
+                    return taskSongFxModel;
+                }
+            };
+            deleteSongTask.setOnSucceeded(e -> reinitFxModel());
+            deleteSongTask.setOnFailed(e -> waitStage.close());
+            executor.execute(deleteSongTask);
+        }
+    }
+
 
     void reinitFxModel() {
         Task<SongFxModel> createSongFxModel = new SongFxModelTask();
         createSongFxModel.setOnSucceeded(e -> {
             this.songFxModel = createSongFxModel.getValue();
             bindings();
-            editSongController.getStage().close();
+            if(editSongController.getStage() != null) editSongController.getStage().close();
+            if(waitStage != null) waitStage.close();
         });
         executor.execute(createSongFxModel);
+    }
+
+    void showWaitWindow() {
+        waitStage = this.getWaitStage();
+        waitStage.show();
     }
 }

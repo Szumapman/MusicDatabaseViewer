@@ -186,6 +186,7 @@ public class AlbumsController implements WaitWindow{
                 }
             };
             deleteAlbumTask.setOnSucceeded(e -> reinitFxModels());
+            deleteAlbumTask.setOnFailed(e -> waitStage.close());
             executor.execute(deleteAlbumTask);
         }
     }

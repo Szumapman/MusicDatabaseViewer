@@ -119,4 +119,8 @@ public class SongFxModel {
 //        init();
     }
 
+    public void deleteSongById() throws ApplicationExceptions {
+        SongsDao songsDao = new SongsDao();
+        songsDao.deleteById(Songs.class, this.getSongsFxObjectProperty().getId());
+    }
 }

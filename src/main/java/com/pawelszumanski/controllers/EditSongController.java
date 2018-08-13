@@ -35,6 +35,9 @@ public class EditSongController {
     @FXML
     private ComboBox<ArtistsFx> artistComboBox;
 
+    @FXML
+    private Button saveButton;
+
 
     private SongsController songsController;
     private SongFxModel songFxModel;
@@ -63,6 +66,7 @@ public class EditSongController {
         this.artistComboBox.valueProperty().bindBidirectional(this.songFxModel.getSongsFxObjectProperty().getAlbumsFx().artistFxProperty());
 
         this.songTitleTextField.textProperty().bindBidirectional(this.songFxModel.getSongsFxObjectProperty().titleProperty());
+        this.saveButton.disableProperty().bind(this.songTitleTextField.textProperty().isEmpty());
 
     }
 
